@@ -1,0 +1,107 @@
+.App {
+  text-align: center;
+  background-color: #283618;
+}
+
+.custom-navbar-bg-color{ 
+  background-color: #fefae0;
+}
+
+.navbar-brand{
+  font-weight:bolder;
+}
+
+.custom-btn {
+  background-color: #606c38;
+  color: #fefae0;
+  border: 0.5px solid #dda15e;
+  /* if you want to remove the border */
+}
+
+.custom-input-bg-color{
+  background-color: #fefae0;
+}
+
+.custom-card-bg-color{
+  
+  background-color: #606c38;
+  color: #fefae0;
+
+}
+
+.custom-border{
+  border: 0.5px solid #dda15e;
+}
+
+.custom-posts-title{
+  color: #bc6c25;
+}
+
+.custom-job-role{
+  color: #dda15e;
+  font-weight: bolder;
+}
+
+.custom-arrow{
+  color: #bc6c25;
+}
+
+.custom-description-color{
+  color: #fefae0;
+}
+
+.custom-icon-color{
+  color: #bc6c25;
+}
+
+.custom-btn-post-color{
+  background-color: #fefae0;
+  color:black;
+}
+
+.custom-btn-post-color:hover{
+  background-color: #dda15e;
+  color: #fefae0;
+}
+
+.custom-dashboard:hover{
+  font-size: larger;
+  color: #bc6c25 !important;
+}
+/* 
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+} */
+
+
