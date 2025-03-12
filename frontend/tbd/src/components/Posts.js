@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react';
+import React, {useState } from 'react';
 
 
 function Posts() {
@@ -7,42 +7,78 @@ function Posts() {
 
   // Hardcoded posts array with the desired format
   const posts = [
-    {
-      id: 1,
-      role: 'Dog washers needed',
-      event: 'Evanston Dog competition',
-      organization: 'Evanston Dogs',
-      description: 'A day of community for grooming dogs and playing',
-    },
-    {
-      id: 2,
-      role: 'Dog walkers wanted',
-      event: 'City Canine Marathon',
-      organization: 'Urban Paws',
-      description: 'Join us for an energetic walk to support local shelters',
-    },
-    {
-      id: 3,
-      role: 'Dog trainers required',
-      event: 'Paws & Tricks Expo',
-      organization: 'Happy Hounds',
-      description: 'A fun event dedicated to dog training and community bonding',
-    },
-    {
-      id: 4,
-      role: 'Volunteer for dog adoption events',
-      event: 'Furry Friends Fair',
-      organization: 'Rescue Rovers',
-      description: 'Help connect dogs with loving homes at our annual fair',
-    },
-    {
-      id: 5,
-      role: 'Dog playgroup organizers',
-      event: 'Puppy Playtime',
-      organization: 'Canine Club',
-      description: 'A relaxed day of socializing and play for dogs and their owners',
-    },
-  ];
+  {
+    id: 1,
+    role: 'Animal Shelter Volunteer',
+    event: 'Pet Adoption Day',
+    organization: 'Happy Tails Shelter',
+    description: 'Help care for and find loving homes for our furry friends.',
+  },
+  {
+    id: 2,
+    role: 'Kids Camp Mentor',
+    event: 'Summer Kids Camp',
+    organization: 'Youth Empowerment Center',
+    description: 'Guide children through fun, educational activities during camp.',
+  },
+  {
+    id: 3,
+    role: 'Healthcare Assistant',
+    event: 'Community Health Fair',
+    organization: 'HealthFirst',
+    description: 'Support healthcare professionals in providing community services.',
+  },
+  {
+    id: 4,
+    role: 'Tech Tutor',
+    event: 'Digital Literacy Workshop',
+    organization: 'Tech4All',
+    description: 'Teach basic computer skills to bridge the digital divide.',
+  },
+  {
+    id: 5,
+    role: 'Environmental Volunteer',
+    event: 'Park Cleanup Day',
+    organization: 'Green Earth',
+    description: 'Join us in cleaning up local parks and green spaces.',
+  },
+  {
+    id: 6,
+    role: 'Community Organizer',
+    event: 'Neighborhood Beautification',
+    organization: 'Community Cares',
+    description: 'Coordinate projects that improve local neighborhoods.',
+  },
+  {
+    id: 7,
+    role: 'Food Bank Volunteer',
+    event: 'Food Drive & Distribution',
+    organization: 'Feeding Hands',
+    description: 'Help collect, pack, and distribute food to those in need.',
+  },
+  {
+    id: 8,
+    role: 'Arts & Culture Assistant',
+    event: 'Local Arts Festival',
+    organization: 'Creative City',
+    description: 'Support community art events and showcase local talent.',
+  },
+  {
+    id: 9,
+    role: 'Sports Mentor',
+    event: 'Youth Sports Day',
+    organization: 'Active Minds',
+    description: 'Coach and mentor young athletes in sports and teamwork.',
+  },
+  {
+    id: 10,
+    role: 'Library Assistant',
+    event: 'Book Donation Drive',
+    organization: 'Community Library',
+    description: 'Assist with organizing events that promote literacy and reading.',
+  },
+];
+
 
   // Toggle the expanded state for a post
   const toggleExpand = (id) => {

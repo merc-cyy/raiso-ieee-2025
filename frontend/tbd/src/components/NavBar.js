@@ -8,7 +8,7 @@ function NavBar(){
                 <div className='container-fluid'>
                     <a className="navbar-brand me-4 d-flex pt-4" href="#">
                         <i className="bi bi-person-arms-up d-inline-block align-text-top fs-3 custom-icon-color pb-2"></i>
-                        NUVolunteer
+                        NUVolunteers!
                     </a>
 
                     {/*Hamburger Menu*/}
