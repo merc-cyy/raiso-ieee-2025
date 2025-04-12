@@ -28,11 +28,11 @@ function LandingPage(){
         </div>
 
         <div className='container-fluid mt-5 text-center'>
-            <h1 className='custom-landing-text'>Please sign in or log in:</h1>
+            <h1 className='custom-landing-text'>Please sign up or log in:</h1>
         </div>
 
         <div className='d-flex justify-content-center custom-gap' >
-            <button className='btn btn-primary custom-btn-post-color' onClick={handleSignIn}>Sign In</button>
+            <button className='btn btn-primary custom-btn-post-color' onClick={handleSignIn}>Sign Up</button>
             <button className='btn btn-primary custom-btn-post-color' onClick={handleLogIn}>Log In</button>
         </div>
     </div>
