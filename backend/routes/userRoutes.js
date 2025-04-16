@@ -1,75 +1,35 @@
-const express = require('express');
+import express from 'express';
+import supabase from '../supabaseClient.js';
+
 const router = express.Router();
-const pool = require('../db');
 
 router.get('/', async (req, res) => {
-    try {
-        const users = await pool.query('SELECT * FROM users');
-        res.json(users.rows);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
-    }
+  const { data, error } = await supabase.from('users').select('*');
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
 });
 
 router.get('/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const user = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
-        if (user.rows.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json(user.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
-    }
+  const { id } = req.params;
+  const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
+  if (error) return res.status(404).json({ error: 'User not found' });
+  res.json(data);
 });
 
-router.post('/', async (req, res) => {
-    try {
-        const { name, email } = req.body;
-        const newUser = await pool.query(
-            'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *',
-            [name, email]
-        );
-        res.json(newUser.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
-    }
-});
 
 router.put('/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { name, email } = req.body;
-        const updatedUser = await pool.query(
-            'UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING *',
-            [name, email, id]
-        );
-        if (updatedUser.rows.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json(updatedUser.rows[0]);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
-    }
+  const { id } = req.params;
+  const { email, description } = req.body;
+  const { data, error } = await supabase.from('users').update({ email, description }).eq('id', id);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
 });
 
 router.delete('/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const deletedUser = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
-        if (deletedUser.rows.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        res.json({ message: 'User deleted successfully' });
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
-    }
+  const { id } = req.params;
+  const { error } = await supabase.from('users').delete().eq('id', id);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ message: 'User deleted successfully' });
 });
 
-module.exports = router;
+export default router;

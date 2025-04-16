@@ -1,23 +1,20 @@
-const express = require('express');
-const cors = require('cors');
-const pool = require('./db');
-const dotenv = require('dotenv');
-
-dotenv.config();
+import express from 'express';
+import cors from 'cors';
+import usersRouter from './routes/userRoutes.js';
+import supabase from './supabaseCLient.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('API is running...');
-});
+app.use('/users', usersRouter);
 
-const userRoutes = require('./routes/userRoutes');
-app.use('/api/users', userRoutes);
+app.listen(5001, () => console.log('Server running on port 5001'));
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+app.get('/api/test-supabase', async (req, res) => {
+    const { data, error } = await supabase.from('users').select('*').limit(1);
+  
+    if (error) return res.status(500).json({ error: error.message });
+    res.json({ connected: true, sampleUser: data[0] || null });
+  });
