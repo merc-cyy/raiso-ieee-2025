@@ -1,6 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function NavBar(){
+function PostsNavBar(){
+
+    const navigate = useNavigate();
+    
+    const handleStudentProfile = () => {
+        navigate('/studentdashboard');
+      }
     return(
         <div>
 
@@ -8,7 +15,7 @@ function NavBar(){
                 <div className='container-fluid'>
                     <a className="navbar-brand me-4 d-flex pt-4" href="#">
                         <i className="bi bi-person-arms-up d-inline-block align-text-top fs-3 custom-icon-color pb-2"></i>
-                        NUVolunteers!
+                        Engage!
                     </a>
 
                     {/*Hamburger Menu*/}
@@ -19,7 +26,7 @@ function NavBar(){
                     <div class="collapse navbar-collapse me-4 " id="navbarNav">
                         <ul class="navbar-nav me-auto">
                             <li class="nav-item">
-                                <a class="nav-link active custom-dashboard" aria-current="page" href="#">My Dashboard</a>
+                                <a class="nav-link active custom-dashboard" aria-current="page" onClick={handleStudentProfile}>My Dashboard</a>
                             </li>
                         </ul>
 
@@ -49,4 +56,4 @@ function NavBar(){
 
 
 
-export default NavBar;
+export default PostsNavBar;

@@ -1,5 +1,5 @@
 import React from 'react';
-import NavBar from './NavBar';
+import PostsNavBar from './PostsNavBar';
 import SearchBar from './SearchBar';
 import Posts from './Posts';
 
@@ -7,7 +7,7 @@ import Posts from './Posts';
 const Home = () => {
     return (
         <div>
-            <NavBar />
+            <PostsNavBar />
             <SearchBar />
             <Posts />
         </div>

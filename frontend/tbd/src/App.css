@@ -1,10 +1,10 @@
 .App {
   text-align: center;
-  background-color: #283618;
+  background-color: #F3E3FF;
 }
 
 .custom-navbar-bg-color{ 
-  background-color: #fefae0;
+  background-color: #EDD5FF;
 }
 
 .navbar-brand{
@@ -12,11 +12,27 @@
 }
 
 .custom-btn {
-  background-color: #606c38;
-  color: #fefae0;
-  border: 0.5px solid #dda15e;
+  background-color: #0450f3;
+  color: #e3dddd00;
+  border: 1px solid #F3D7B4;
   /* if you want to remove the border */
 }
+.custom-img{
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height:40rem;
+
+}
+.content-overlay {
+  padding-top: 25rem;
+}
+.custom-icon-color {
+  color: #7B2CBF;
+}
+
+
+
 
 .custom-input-bg-color{
   background-color: #fefae0;
@@ -24,7 +40,7 @@
 
 .custom-card-bg-color{
   
-  background-color: #606c38;
+  background-color: #A487E7;
   color: #fefae0;
 
 }
@@ -34,33 +50,36 @@
 }
 
 .custom-posts-title{
-  color: #bc6c25;
+  color:#1f0633;
 }
 
 .custom-job-role{
-  color: #dda15e;
+  color: #240046;
   font-weight: bolder;
 }
 
 .custom-arrow{
-  color: #bc6c25;
+  color: #5337f4;
 }
 
 .custom-description-color{
   color: #fefae0;
 }
 
-.custom-icon-color{
-  color: #bc6c25;
-}
+
 
 .custom-btn-post-color{
   background-color: #fefae0;
   color:black;
 }
 
+.custom-btn-interestedpost-color {
+  background-color: #f7f7f4;
+  color: black;
+}
+
 .custom-btn-post-color:hover{
-  background-color: #dda15e;
+  background-color: #BBD0FF;
   color: #fefae0;
 }
 
@@ -78,7 +97,7 @@
 }
 
 .custom-landing-text{
-  color:#bc6c25;
+  color: #240046;
 }
 
 .custom-gap{
@@ -87,14 +106,40 @@
 
 .custom-form-box{
   width: 100vh;
-  border: 2px solid #dda15e;
+  border: 2px solid #9D4EDD;
   border-radius: 50px;
   margin-top: 5%;
-  background-color: #fefae0;
+  background-color:#ffff;
 
 }
 
 .custom-form-section{
-  background-color: #faf1d5;
+  background-color: #FCF8FF;
   border-radius: 10px;
+}
+
+
+
+
+.full-screen-bg {
+  position: relative;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 1s ease-in-out;
+}
+
+
+.text-outline-black {
+  text-shadow:
+    -1px -1px 0 black,
+    1px -1px 0 black,
+    -1px 1px 0 black,
+    1px 1px 0 black;
+}
+
+.full-viewport{
+  width: 100vw;
+  height: 100vh;
 }

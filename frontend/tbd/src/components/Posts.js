@@ -2,7 +2,9 @@ import React, {useState } from 'react';
 
 
 function Posts() {
-  // Track which post is expanded (null means no post is expanded)
+  
+  
+  
   const [expandedPost, setExpandedPost] = useState(null);
 
   // Hardcoded posts array with the desired format
@@ -114,7 +116,7 @@ function Posts() {
                 </button>
             </div>
                 {expandedPost === post.id && (
-                <div className='d-flex flex-column'>
+                <div className='d-flex flex-column text-center'>
                     <p className="mt-2 custom-description-color">{post.description}</p>
                     <button className="btn btn-primary w-auto custom-btn-post-color">I am interested!</button>
                 </div>

@@ -1,12 +1,71 @@
 import React from 'react';
+import { useState } from 'react';
+
 
 function Onboarding(){
+
+    //state variables
+
+    const handleSubmit= (e) => {
+        e.preventDefault();//prevent default submission on page reload
+
+        //then store the values
+        const formData = {
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+        city: city,
+        state: state,
+        zip: zip,
+        interests: interests,
+        otherInterests: otherInterests};
+
+        //then add the api call
+
+        fetch('api/register',
+        {
+            method: 'POST',
+            headers: { 'Content-Type' : 'application.json'},
+            body : JSON.stringify(formData)
+        })
+        .then((res) => {
+            if (!res.ok)
+            {
+                throw new Error('User not added');
+            }
+            return res.json();
+
+        })
+        .then((data) => { //data from the previous then
+            console.log('Registration successful', data);
+            alert('Registration successful!');//FIXXX THIS TO SHOW SUBMISSION SUCCESSFUL
+        })
+
+        .catch((error) => {
+            console.error('Registration failed:', error);
+            alert('Registration failed. Please try again.');//FIXX THIS TO HANDLE ERRORS BETTER
+        })
+    }
+
+    const [email, setEmail] = useState(""); //"" is the intial value 
+    const [password, setPassword] = useState('');
+    const [retypePassword, setRetypePassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zip, setZip] = useState('');
+    const [interests, setInterests] = useState('');
+    const [otherInterests, setOtherInterests] = useState('');
+
+
     return(
         <div className='container-fluid d-flex justify-content-center align-items-center'>
             <div className='custom-form-box d-flex flex-column align-items-center'>
                 
                 <div className='container-fluid text-center mt-4 custom-landing-text'>
-                    <h3>Sign Up to NUVolunteers!</h3>
+                    <h3>Student Sign Up to Engage!</h3>
                 </div>
 
                 <div className='container-fluid mt-4 ps-5 pe-5 pb-3'>
@@ -19,8 +78,8 @@ function Onboarding(){
                         <div className='container pt-1 custom-form-section'>
                             <div class="row g-3 pb-3">
                                 <div class="col">
-                                    <label for="inputEmail" class="form-label">Email</label>
-                                        <input type="email" class="form-control" placeholder='example@gmail.com' id="inputEmail" />
+                                    <label for="inputEmail" className="form-label">Email</label>
+                                        <input type="email" className="form-control" placeholder='example@gmail.com' id="inputEmail" value={email} onChange={e => setEmail(e.target.value)}/>
                                 </div>
                             </div>
 
@@ -28,12 +87,12 @@ function Onboarding(){
                             <div class='row g-3 pb-3'>
                                 <div class="col-md-6">
                                     <label for="inputPassword1" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="inputPassword1"/>
+                                        <input type="password" class="form-control" id="inputPassword1" value={password} onChange={e => setPassword(e.target.value)}/>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label for="inputPassword2" class="form-label">Retype Password</label>
-                                        <input type="password" class="form-control" id="inputPassword2"/>
+                                        <input type="password" class="form-control" id="inputPassword2" value={retypePassword} onChange={e => setRetypePassword(e.target.value)}/>
                                 </div>
 
                             </div>
@@ -41,12 +100,12 @@ function Onboarding(){
                             <div class='row g-3 pb-3'>
                                 <div class="col-md-6">
                                     <label for="firstname" class="form-label">First Name</label>
-                                        <input type="text" class="form-control" placeholder='Willie' id="firstname"/>
+                                        <input type="text" class="form-control" placeholder='Willie' id="firstname" value={firstName} onChange={e => setFirstName(e.target.value)}/>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label for="lastname" class="form-label">Last Name</label>
-                                        <input type="text" class="form-control"placeholder='Wildcat' id="lastname"/>
+                                        <input type="text" class="form-control"placeholder='Wildcat' id="lastname" value={lastName} onChange={e => setLastName(e.target.value)}/>
                                 </div>
 
                             </div>
@@ -54,12 +113,12 @@ function Onboarding(){
                             <div className='row g-3 pb-3'>
                                 <div class="col-md-6">
                                     <label for="inputCity" class="form-label">City</label>
-                                        <input type="text" class="form-control" id="inputCity"/>
+                                        <input type="text" class="form-control" id="inputCity" value={city} onChange={e => setCity(e.target.value)}/>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label for="inputState" class="form-label">State</label>
-                                        <select id="inputState" class="form-select">
+                                        <select id="inputState" class="form-select" value={state} onChange={e => setState(e.target.value)}>
                                             <option selected>Choose...</option>
                                             <option value="AL">Alabama</option>
                                             <option value="AK">Alaska</option>
@@ -116,7 +175,7 @@ function Onboarding(){
 
                                 <div class="col-md-2">
                                     <label for="inputZip" class="form-label">Zip</label>
-                                        <input type="text" class="form-control" id="inputZip"/>
+                                        <input type="text" class="form-control" id="inputZip" value={zip} onChange={e => setZip(e.target.value)}/>
                                 </div>
                             </div>
 
@@ -130,10 +189,11 @@ function Onboarding(){
                                                 Check me out
                                             </label>
                                     </div>
-                                </div> */}{/* 
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">Sign in</button>
                                 </div> */}
+                                
+                                {/* <div class="col-12">
+                                    <button type="submit" className="btn btn-primary">Save</button>
+                                </div>  */}
 
                         </div>
 
@@ -143,7 +203,7 @@ function Onboarding(){
                         </div>
 
                         <div className='container pt-1 custom-form-section'>
-                            <div className='row g-3 pb-3'>
+                            {/* <div className='row g-3 pb-3'>
                                 <div class="col">
                                     <label for="interests" class="form-label">Interests</label>
                                         <select id="interests" class="form-select">
@@ -160,13 +220,17 @@ function Onboarding(){
                                             <option value="disaster">Participate in disaster relief</option>
                                         </select>
                                 </div>
-                            </div>
+                            </div> */}
 
                             <div className='row g-3 pb-3'>
                                 <div class="col">
-                                    <label for="otherinterests" class="form-label">Others</label>
-                                        <textarea class="form-control" id="otherinterests" rows="3"></textarea>
+                                    <label for="otherinterests" class="form-label"></label> 
+                                        <textarea class="form-control" id="otherinterests" rows="3" value={interests} onChange={e => setInterests(e.target.value)}></textarea>
                                 </div>
+                            </div>
+
+                            <div class="col-12">
+                                    <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Save</button>
                             </div>
 
                         </div>
