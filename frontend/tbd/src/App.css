@@ -31,7 +31,15 @@
   color: #7B2CBF;
 }
 
+.custom-landing-image{
+  border-radius: 50%;
+  object-fit:cover;
+  transform: scale(0.8);
+    /* Make it 50% of its original size */
 
+
+
+}
 
 
 .custom-input-bg-color{

@@ -1,12 +1,27 @@
 import React from 'react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 function Onboarding(){
 
     //state variables
 
-    const handleSubmit= (e) => {
+    const navigate = useNavigate();
+
+    const [registrationSuccess, setRegistrationSuccess] = useState(false); // to trakc if registration was successful
+    const [registrationError, setRegistrationError] = useState('');
+    const [email, setEmail] = useState(""); //"" is the intial value 
+    const [password, setPassword] = useState('');
+    const [retypePassword, setRetypePassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zip, setZip] = useState('');
+    const [interests, setInterests] = useState('');
+
+    const handleSubmit= async (e) => {
         e.preventDefault();//prevent default submission on page reload
 
         //then store the values
@@ -18,46 +33,45 @@ function Onboarding(){
         city: city,
         state: state,
         zip: zip,
-        interests: interests,
-        otherInterests: otherInterests};
+        interests: interests};
 
-        //then add the api call
+        if (password != retypePassword){
+            setRegistrationError("Passwords do not match");
+            setRegistrationSuccess(false);
+            return;
+        }
 
-        fetch('api/register',
-        {
-            method: 'POST',
-            headers: { 'Content-Type' : 'application.json'},
-            body : JSON.stringify(formData)
-        })
-        .then((res) => {
+        try{
+            //then add the api call
+            const res = await fetch('api/register',
+            {
+                method: 'POST',
+                headers: { 'Content-Type' : 'application/json'},
+                body : JSON.stringify(formData)
+            })
             if (!res.ok)
             {
-                throw new Error('User not added');
+                const errorData = await res.json(); // Try to parse error message from server
+                throw new Error(errorData.message || 'User not added');
             }
-            return res.json();
-
-        })
-        .then((data) => { //data from the previous then
+            const data = await res.json()
             console.log('Registration successful', data);
-            alert('Registration successful!');//FIXXX THIS TO SHOW SUBMISSION SUCCESSFUL
-        })
+            setRegistrationSuccess(true);
+            setRegistrationError('');
 
-        .catch((error) => {
+        }
+        catch(error) {
             console.error('Registration failed:', error);
-            alert('Registration failed. Please try again.');//FIXX THIS TO HANDLE ERRORS BETTER
-        })
-    }
+            setRegistrationError(error.message || 'Registration failed. Please try again.');
+            setRegistrationSuccess(false);
 
-    const [email, setEmail] = useState(""); //"" is the intial value 
-    const [password, setPassword] = useState('');
-    const [retypePassword, setRetypePassword] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [city, setCity] = useState('');
-    const [state, setState] = useState('');
-    const [zip, setZip] = useState('');
-    const [interests, setInterests] = useState('');
-    const [otherInterests, setOtherInterests] = useState('');
+    }}
+
+    const handleLoginLinkClick = () => {
+        navigate('/'); // Assuming '/' is your landing page route
+    }; // if login is successful
+
+
 
 
     return(
@@ -69,7 +83,7 @@ function Onboarding(){
                 </div>
 
                 <div className='container-fluid mt-4 ps-5 pe-5 pb-3'>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div>
                             <h5 className='custom-landing-text mb-0'>Personal Information</h5>
                             <p className='ps-3'>Input your profile info here!</p>
@@ -224,19 +238,33 @@ function Onboarding(){
 
                             <div className='row g-3 pb-3'>
                                 <div class="col">
-                                    <label for="otherinterests" class="form-label"></label> 
-                                        <textarea class="form-control" id="otherinterests" rows="3" value={interests} onChange={e => setInterests(e.target.value)}></textarea>
+                                    <label for="interests" class="form-label"></label> 
+                                        <textarea class="form-control" id="interests" rows="3" value={interests} onChange={e => setInterests(e.target.value)}></textarea>
                                 </div>
                             </div>
 
                             <div class="col-12">
-                                    <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Save</button>
+                                    <button type="submit" className="btn btn-primary" >Save</button>
                             </div>
 
                         </div>
 
               
                     </form>
+
+                    
+                    {registrationSuccess && (
+                        <div className="mt-3 alert alert-success" role="alert">
+                            Registration successful! You can now <button className="btn btn-link p-0" onClick={handleLoginLinkClick}>Log In</button> to see open postings.
+                        </div>
+                    )}
+
+                    {registrationError && (
+                        <div className="mt-3 alert alert-danger" role="alert">
+                            Error: {registrationError}
+                        </div>
+                    )}
+
                 </div>
             </div>
         </div>
@@ -248,7 +276,8 @@ function Onboarding(){
 
 
     );
-}
+};
+
 
 export default Onboarding;
 
