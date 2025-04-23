@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import usersRouter from './routes/userRoutes.js';
-import supabase from './supabaseCLient.js';
+import postsRouter from './routes/posts.js';
+import interestsRouter from './routes/interests.js';
+import supabase from './supabaseClient.js';
 
 const app = express();
 
@@ -9,6 +11,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/users', usersRouter);
+app.use('/posts', postsRouter);
+app.use('/interests', interestsRouter);
 
 app.listen(5001, () => console.log('Server running on port 5001'));
 
