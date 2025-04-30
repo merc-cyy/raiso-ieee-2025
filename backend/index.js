@@ -1,9 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import usersRouter from './routes/userRoutes.js';
-import authRoutes from './routes/auth.js';
 import postsRouter from './routes/posts.js';
 import interestsRouter from './routes/interests.js';
+import supabase from './supabaseClient.js';
+import authRoutes from './routes/auth.js';
 import supabase from './supabaseClient.js';
 
 const app = express();
