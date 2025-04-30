@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import usersRouter from './routes/userRoutes.js';
 import authRoutes from './routes/auth.js';
+import postsRouter from './routes/posts.js';
+import interestsRouter from './routes/interests.js';
 import supabase from './supabaseClient.js';
 
 const app = express();
@@ -14,6 +16,8 @@ app.get('/auth/test', (req, res) => {
 });
 app.use('/auth', authRoutes);//authentication
 app.use('/users', usersRouter);
+app.use('/posts', postsRouter);
+app.use('/interests', interestsRouter);
 
 app.listen(5001, () => console.log('Server running on port 5001'));
 
