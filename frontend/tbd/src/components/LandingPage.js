@@ -18,6 +18,16 @@ function LandingPage(){
 
     const navigate = useNavigate();// navigate to another page
 
+    //state variables
+    const backendApiUrl = 'http://localhost:5001';
+
+    const [showLoginModal, setShowLoginModal] = useState(false); // State to control the visibility of the login modal
+    const [showChangePassword, setShowChangePassword] = useState(false); // State to control the visibility of the chagne password
+    const [loginUsername, setLoginUsername] = useState('');
+    const [loginPassword, setLoginPassword] = useState('');
+    const [loginSuccess, setLoginSuccess] = useState(false); // to trakc if registration was successful
+    const [loginError, setLoginError] = useState('');
+
     const [currentImageIndex, setCurrentImageIndex] = useState(0);//tracks the index of the image currently in place
     const images = useMemo(() => [
         animalShelter, // Use the imported variables
@@ -70,6 +80,56 @@ function LandingPage(){
         navigate('/home');
     };
 
+    const handleLogInClick = () => {
+        setShowLoginModal(true); // Show the login modal when the "Log In" button is clicked
+    };
+
+    const handleCloseLoginModal = () => {
+        setShowLoginModal(false); // Hide the login modal
+    };
+
+    const handleLoginSubmit = async (event) => {
+        event.preventDefault();
+        // Here you would typically handle the actual login logic
+        console.log('Logging in with:', loginUsername, loginPassword);
+
+        try
+        {
+            const response = await fetch(`${backendApiUrl}/auth/login`, {
+                method: 'POST',
+                headers : { 'Content-Type': 'application/json'},
+                body : JSON.stringify({
+                    email: loginUsername,
+                    password: loginPassword
+                })
+            });
+
+            if (response.ok)
+            {
+                const data = await response.json();
+                localStorage.setItem('authToken', data.token);
+                console.log('Registration successful', data);
+                navigate('/home');
+                setShowLoginModal(false);
+                setLoginSuccess(true);
+                setLoginError('');
+                
+                
+            }
+            else
+            {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Login Failed');
+            }
+        }
+        catch(error)
+        {
+            console.error('Login failed:', error);
+            setLoginError(error.message || 'Login failed. Please try again.');
+            setLoginSuccess(false);
+        }
+    };
+
 
     return(
         <div className="d-flex flex-column ">
@@ -92,7 +152,7 @@ function LandingPage(){
                                 <a className="nav-link active custom-dashboard" aria-current="page" onClick={handleSignIn}>Sign Up</a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link active custom-dashboard" aria-current="page" onClick={handleLogIn}>Log In</a>
+                                <a className="nav-link active custom-dashboard" aria-current="page" onClick={handleLogInClick}>Log In</a>
                             </li>
                     
                         </ul>
@@ -115,6 +175,48 @@ function LandingPage(){
                     </div>
                 </div>
             </div>
+
+
+            {/* Login Modal */}
+            {showLoginModal && (
+                <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Log In</h5>
+                                <button type="button" className="btn-close" onClick={handleCloseLoginModal} aria-label="Close"></button>
+                            </div>
+                            <div className="modal-body">
+                                <form onSubmit={handleLoginSubmit}>
+                                    <div className="mb-3">
+                                        <label htmlFor="loginUsername" className="form-label">Email</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="loginUsername"
+                                            value={loginUsername}
+                                            onChange={(e) => setLoginUsername(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="loginPassword" className="form-label">Password</label>
+                                        <input
+                                            type="password"
+                                            className="form-control"
+                                            id="loginPassword"
+                                            value={loginPassword}
+                                            onChange={(e) => setLoginPassword(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <button type="submit" className="btn btn-primary">Log In</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className='mt-5 pt-5'>
                 <div className='container'>

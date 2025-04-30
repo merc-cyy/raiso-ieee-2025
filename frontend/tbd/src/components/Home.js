@@ -8,7 +8,7 @@ const Home = () => {
     return (
         <div>
             <PostsNavBar />
-            <SearchBar />
+            {/* <SearchBar /> */}
             <Posts />
         </div>
     );

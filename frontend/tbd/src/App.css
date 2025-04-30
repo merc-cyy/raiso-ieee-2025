@@ -12,9 +12,8 @@
 }
 
 .custom-btn {
-  background-color: #0450f3;
-  color: #e3dddd00;
-  border: 1px solid #F3D7B4;
+  background-color: #cfdbf6;
+  border: 1px solid #f3eeb4;
   /* if you want to remove the border */
 }
 .custom-img{
@@ -43,7 +42,7 @@
 
 
 .custom-input-bg-color{
-  background-color: #fefae0;
+  background-color: #ffffff;
 }
 
 .custom-card-bg-color{
@@ -150,4 +149,9 @@
 .full-viewport{
   width: 100vw;
   height: 100vh;
+}
+
+.custom-card{
+  width: 40em;
+
 }

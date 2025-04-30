@@ -3,9 +3,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
+
+
 function Onboarding(){
 
     //state variables
+    const backendApiUrl = 'http://localhost:5001';
 
     const navigate = useNavigate();
 
@@ -32,8 +35,8 @@ function Onboarding(){
         lastName: lastName,
         city: city,
         state: state,
-        zip: zip,
-        interests: interests};
+        zipcode: zip,
+        description: interests};
 
         if (password != retypePassword){
             setRegistrationError("Passwords do not match");
@@ -41,9 +44,15 @@ function Onboarding(){
             return;
         }
 
+        if (password.length < 6) {
+            setRegistrationError("Password must be at least 6 characters long");
+            setRegistrationSuccess(false);
+            return;
+        }
+
         try{
             //then add the api call
-            const res = await fetch('api/register',
+            const res = await fetch(`${backendApiUrl}/auth/signup`,
             {
                 method: 'POST',
                 headers: { 'Content-Type' : 'application/json'},
@@ -52,7 +61,9 @@ function Onboarding(){
             if (!res.ok)
             {
                 const errorData = await res.json(); // Try to parse error message from server
-                throw new Error(errorData.message || 'User not added');
+                console.log("errordata:" + errorData)
+                console.log("error" + errorData.error)
+                throw new Error(errorData.error || 'User not added');
             }
             const data = await res.json()
             console.log('Registration successful', data);
@@ -255,7 +266,7 @@ function Onboarding(){
                     
                     {registrationSuccess && (
                         <div className="mt-3 alert alert-success" role="alert">
-                            Registration successful! You can now <button className="btn btn-link p-0" onClick={handleLoginLinkClick}>Log In</button> to see open postings.
+                            Registration successful! Check your email to confirm your address then you will be redirected to login
                         </div>
                     )}
 
@@ -283,6 +294,7 @@ export default Onboarding;
 
 
 
+        // LOGIN You can now <button className="btn btn-link p-0" onClick={handleLoginLinkClick}>Log In</button> to see open postings.<br></br> 
         // <div>
         //     <div className='container-fluid mt-5 custom-landing-logo'>
         //         <a className="navbar-brand me-4 d-flex" href="#">
