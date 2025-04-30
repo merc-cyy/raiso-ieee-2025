@@ -1,13 +1,18 @@
 import express from 'express';
 import cors from 'cors';
 import usersRouter from './routes/userRoutes.js';
-import supabase from './supabaseCLient.js';
+import authRoutes from './routes/auth.js';
+import supabase from './supabaseClient.js';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+app.get('/auth/test', (req, res) => {
+  res.send('Auth routes are being mounted!');
+});
+app.use('/auth', authRoutes);//authentication
 app.use('/users', usersRouter);
 
 app.listen(5001, () => console.log('Server running on port 5001'));

@@ -3,37 +3,155 @@ import supabase from '../supabaseClient.js';
 
 const router = express.Router();
 
+// router.post('/signup', async (req, res) => {
+//     const {
+//         id,
+//         email,
+//         description,
+//         first_name,
+//         last_name,
+//         city,
+//         state,
+//         zipcode
+//       } = req.body;
+    
+//       if (!id || !email || !description) {
+//         return res.status(400).json({ error: 'Missing required fields' });
+//       }
+    
+//       const { data, error } = await supabase.from('users').insert([{
+//         id,
+//         email,
+//         description,
+//         first_name,
+//         last_name,
+//         city,
+//         state,
+//         zipcode
+//       }]);
+    
+//       if (error) return res.status(500).json({ error: error.message });
+    
+//       res.status(201).json({ user: data[0] });
+//     });
+
+
+/////////////////////////////
 router.post('/signup', async (req, res) => {
-    const {
-        id,
+  console.log('Received POST request at /auth/register-test'); 
+  const {
         email,
-        description,
-        first_name,
-        last_name,
+        password,
+        firstName,
+        lastName,
         city,
         state,
-        zipcode
-      } = req.body;
-    
-      if (!id || !email || !description) {
-        return res.status(400).json({ error: 'Missing required fields' });
+        zipcode,
+        description
+    } = req.body;//from the frontend
+
+  if (!email || !password){
+    console.log("error: ", authError.message)
+    return res.status(400).json({error: "Email and password are needed"})
+  }
+
+  try
+  {
+    //add user to the auth table
+    const {data: authData, error: authError} = await supabase.auth.signUp({
+      email: email,
+      password: password
+    })
+
+    if (authError)//in case of authentication error
+    {
+      if (authError.message.includes('User already registered'))
+      {
+        return res.status(400).json({error: "You have already signed up. Try resetting your password."});
       }
+      else
+      {
+        console.log("EEROOOR: ", authError.message)
+        return res.status(400).json({error: authError.message})
+      }
+    }
+
+    const userId = authData.user.id
     
-      const { data, error } = await supabase.from('users').insert([{
-        id,
-        email,
-        description,
-        first_name,
-        last_name,
-        city,
-        state,
-        zipcode
-      }]);
-    
-      if (error) return res.status(500).json({ error: error.message });
-    
-      res.status(201).json({ user: data[0] });
-    });
+
+    //insert into users table
+    const {data: userData, error: userError} = await supabase
+            .from('users')
+            .insert([
+              {
+                userauth_id: userId, // Use the ID from Supabase Auth
+                email: email,
+                first_name: firstName,
+                last_name: lastName,
+                city: city,
+                state: state,
+                zipcode: zipcode,
+                description: description,
+              }
+            ])
+            .select();//select new row 
+
+    if (userError) {
+            // If there's an error inserting into the 'users' table,
+            return res.status(500).json({ error: userError.message });
+        }///POTENTIAL BUG: ROLLING BACK?
+
+    res.status(201).json({
+      error: userData[0]
+    })
+
+  }
+
+  catch
+  {
+    console.error('Error during signup:', error);
+    res.status(500).json({ error: 'Internal server error during signup' });
+  
+  }
+
+});
+
+///////////////////////////
+//login
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    try 
+    {
+      const { data, error } = await supabase.auth.signInWithPassword({  // Changed to signInWithPassword
+            email,
+            password,
+        });
+
+      if (error) {
+            return res.status(401).json({ error: error.message }); //  401 for invalid credentials
+        }
+
+      //  Successful login, send back user data and token
+        res.json({ 
+            user: data.user,  //  Include the user object
+            token: data.session.access_token, //  Send the access token
+        });
+
+    }
+
+    catch
+    {
+      console.error('Error during login:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+
+
+});
 
 
 router.get('/me', async (req, res) => {
