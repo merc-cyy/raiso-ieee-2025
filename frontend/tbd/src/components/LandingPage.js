@@ -75,10 +75,10 @@ function LandingPage(){
         navigate('/onboarding');
     };
 
-    const handleLogIn = () => {
-        // When the user registers, navigate to the home page
-        navigate('/home');
-    };
+    // const handleLogIn = () => {
+    //     // When the user registers, navigate to the home page
+    //     navigate('/home');
+    // };DISABLED: GO TO HOME WITHOUT LOGIN
 
     const handleLogInClick = () => {
         setShowLoginModal(true); // Show the login modal when the "Log In" button is clicked
@@ -108,6 +108,8 @@ function LandingPage(){
             {
                 const data = await response.json();
                 localStorage.setItem('authToken', data.token);
+                localStorage.setItem('userAuthData', JSON.stringify(data.user)); //to store user data
+                localStorage.setItem('profileData', JSON.stringify(data.profile)); //to store user data
                 console.log('Registration successful', data);
                 navigate('/home');
                 setShowLoginModal(false);
@@ -170,7 +172,7 @@ function LandingPage(){
 
                             {/* Container for the Go to Postings buttons */}
                             <div className="d-flex justify-content-center custom-gap">
-                                <button className="btn btn-primary btn-lg custom-btn-post-color" onClick={handleLogIn}>See Our Open Postings!</button>
+                                <button className="btn btn-primary btn-lg custom-btn-post-color" onClick={handleLogInClick}>See Our Open Postings!</button>
                             </div>
                     </div>
                 </div>
@@ -218,29 +220,29 @@ function LandingPage(){
                 </div>
             )}
 
-            <div className='mt-5 pt-5'>
-                <div className='container'>
+            <div className='mt-5 pt-5 '>
+                <div className='container pop'>
                     <div className='m-5 landing-page-blurbs mt-5 text-center fs-3 d-flex flex-column align-items-center'>
-                        Sponsored by Northwestern students, <br></br>Engage is a platform that connects college students <br></br>to open volunteer opportunities around their campuses.
+                       <b> Sponsored by Northwestern students,</b> Engage is a platform that connects college students <br></br>to open volunteer opportunities around their campuses.
                         <img className='custom-landing-image' src={northwestern_image} alt='Northwestern University' ></img>
                     </div>
                 </div>
 
-                <div className='container'>
+                <div className='container pop'>
                     <div className='m-5 landing-page-blurbs mt-5 text-center fs-3 d-flex flex-column align-items-center'>
-                    Students: <br></br>
+                    <b> Students: </b>
                     Get access to a tailored list of available opportunites <br></br> that adjusts its recommendations based on your interests!
                     <img className='custom-landing-image' src={food_drive} alt='Northwestern University' ></img>
                     </div>  
                 </div>
 
-                <div className='container'>
+                {/* <div className='container'>
                     <div className='m-5 landing-page-blurbs mt-5 text-center fs-3 d-flex flex-column align-items-center'>
                     NPOs: <br></br>
                     Sign up for your organization to get reliable skilled volunteeers <br></br> by posting your opportunities on our site!
                     <img className='custom-landing-image' src={npos} alt='Northwestern University' ></img>
                     </div>
-                </div>
+                </div> */}
 
             </div>
 

@@ -6,6 +6,8 @@ import Onboarding from './components/Onboarding';
 import StudentDashboard from './components/StudentDashboard';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';//importing BrowserRouter, Route, Switch from react-router-dom
 import StudentProfile from './components/StudentProfile';
+import ProtectedRoute from './components/protectedRoute';
+// import Footer from './components/Footer';
 
 
 
@@ -16,11 +18,14 @@ function App() {
       <Routes>
 
         <Route path="/" element ={<LandingPage/>} />
-        <Route path="/home" element ={<Home/>} />
         <Route path="/onboarding" element ={<Onboarding/>} />
-        <Route path="/studentdashboard" element={<StudentDashboard/>}/>
-        <Route path="/studentprofile" element={<StudentProfile/>}/>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/home" element ={<Home/>} />
+          <Route path="/studentdashboard" element={<StudentDashboard/>}/>
+          <Route path="/studentprofile" element={<StudentProfile/>}/>
+        </Route>
       </Routes>
+
 
     </Router>
   );

@@ -1,7 +1,111 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import  { useState, useEffect } from 'react';
 
 function StudentProfile(){
+    //get user data from local storage
+    // const authToken = localStorage.getItem('authToken');//get the access tken
+    // const userAuthData = JSON.parse(localStorage.getItem('userAuthData'));
+    // const profileData = JSON.parse(localStorage.getItem('profileData'));
+    // const userId = userAuthData.id
+
+    // const firstName = profileData.first_name
+    // const lastName = profileData.last_name
+    const backendApiUrl = 'http://localhost:5001';
+    const navigate = useNavigate();
+
+    const authToken = localStorage.getItem('authToken');
+    let userAuthData = null;
+    let userId = null;
+    const storedUserAuthData = localStorage.getItem('userAuthData');
+    if (storedUserAuthData) {
+        try {
+            userAuthData = JSON.parse(storedUserAuthData);
+            userId = userAuthData?.id;
+        } catch (error) {
+            console.error("Error parsing userAuthData:", error);
+        }
+    }
+    console.log("Auth Token:", authToken);
+    console.log("User ID:", userId);
+
+    const [profile, setProfile] = useState(null);//get profile
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => { 
+        if (!authToken)//if there is no token
+        {
+            navigate('/');
+            return;
+        }
+
+        const getProfile = async () => {
+
+            setLoading(true);
+
+            try
+            {
+                const res = await fetch(`${backendApiUrl}/auth/me`, {
+                    headers: {
+                        'Authorization' :  `Bearer ${authToken}`,
+                    },
+                });//fetch profile with the token to authorize
+
+                if (!res.ok)
+                {
+                    if (res.status === 401)
+                    {
+                        localStorage.removeItem('authToken');//token expired
+                        navigate('/');
+                        return;
+                    }
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Failed to fetch profile');
+                }
+                const data = await res.json();
+                setProfile(data.user);
+
+            }
+
+            catch(error)
+            {
+                setError(error.message);
+
+            }
+            finally
+            {
+                setLoading(false);
+            }
+        };
+        getProfile();
+    }, [authToken, navigate, backendApiUrl]);
+
+
+    const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
+    localStorage.removeItem('profileData');
+    // Optionally clear other user-specific data
+    // Optionally redirect to the login page
+    navigate('/');
+    };
+
+    if (loading) 
+        {
+            return <p>Loading profile...</p>;
+        }
+
+    if (error) 
+        {
+            return <p>Error loading profile: {error}</p>;
+        }
+
+    if (profile){
+    const firstName = profile.first_name
+    const last_name = profile.last_name
+    
+
     return(
 
         <div className='bg-light row'>
@@ -31,8 +135,8 @@ function StudentProfile(){
                         <li className="mb-2 ms-2">
                             <Link to="/studentprofile" className="nav-link custom-dashboard text-decoration-none">Profile</Link>
                         </li>
-                        <li className="mb-2 ms-2">
-                            <Link to="/logout" className="nav-link custom-dashboard text-decoration-none">Logout</Link>
+                        <li className="mb-2">
+                            <span to="#" onClick={handleLogout} className="nav-link custom-dashboard text-decoration-none">Logout</span>
                         </li>
                         {/* Add more sidebar links as needed */}
                     </ul>
@@ -222,6 +326,7 @@ function StudentProfile(){
 
 
     );
+}
 }
 
 export default StudentProfile;

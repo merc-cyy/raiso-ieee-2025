@@ -81,7 +81,7 @@ router.post('/signup', async (req, res) => {
 
     //insert into users table
     const {data: userData, error: userError} = await supabase
-            .from('users')
+            .from('public.users')
             .insert([
               {
                 userauth_id: userId, // Use the ID from Supabase Auth
@@ -119,6 +119,7 @@ router.post('/signup', async (req, res) => {
 ///////////////////////////
 //login
 router.post('/login', async (req, res) => {
+    console.log("LOGGING IN")
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -136,11 +137,12 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: error.message }); //  401 for invalid credentials
         }
 
-      //  Successful login, send back user data and token
-        res.json({ 
-            user: data.user,  //  Include the user object
-            token: data.session.access_token, //  Send the access token
-        });
+      //  Successful login, get the user profile info.
+
+      res.json({ 
+          user: data.user,  //  Include the user object
+          token: data.session.access_token, //  Send the access token
+      });
 
     }
 
@@ -155,27 +157,36 @@ router.post('/login', async (req, res) => {
 
 
 router.get('/me', async (req, res) => {
+  console.log("GETTING PROFILE")
   const { authorization } = req.headers;
   if (!authorization) return res.status(401).json({ error: 'Missing token' });
 
   const token = authorization.replace('Bearer ', '');
-
+  //console.log("token is:", token)
+  
   const {
-    data: { user },
+    data,
     error
   } = await supabase.auth.getUser(token);
 
-  if (error || !user) return res.status(401).json({ error: 'Invalid token' });
+  
+  console.log("error", error)
+  console.log("data", data)
 
-  const { data: profile, error: metaError } = await supabase
-    .from('users')
+  if (error || !data) return res.status(401).json({ error: 'Invalid token' });
+
+  console.log("id", data.user.id)
+  const { profiledata, profileerror } = await supabase
+    .from('public.users')
     .select('*')
-    .eq('id', user.id)
+    .eq('userauth_id', data.user.id)
     .single();
 
-  if (metaError) return res.status(500).json({ error: metaError.message });
-
-  res.json({ user: profile });
+  console.log("PROFILE:", profiledata)
+  if (profileerror) return res.status(500).json({ error: profileerror.message });
+  console.log("PROFILE:", profiledata)
+  console.log("Perror:", profileerror)
+  res.json({ user: profiledata });
 });
 
 export default router;

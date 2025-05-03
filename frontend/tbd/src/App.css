@@ -155,3 +155,16 @@
   width: 40em;
 
 }
+
+.blur-background{
+  filter: blur(5px);
+  z-index: -1;
+}
+
+.pop{
+  z-index: 0;
+}
+
+.footer-color{
+  background-color: #ede7f4;
+}

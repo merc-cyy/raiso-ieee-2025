@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 
 
@@ -10,7 +10,7 @@ function Onboarding(){
     //state variables
     const backendApiUrl = 'http://localhost:5001';
 
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [registrationSuccess, setRegistrationSuccess] = useState(false); // to trakc if registration was successful
     const [registrationError, setRegistrationError] = useState('');
@@ -38,7 +38,7 @@ function Onboarding(){
         zipcode: zip,
         description: interests};
 
-        if (password != retypePassword){
+        if (password !== retypePassword){
             setRegistrationError("Passwords do not match");
             setRegistrationSuccess(false);
             return;
@@ -78,9 +78,9 @@ function Onboarding(){
 
     }}
 
-    const handleLoginLinkClick = () => {
-        navigate('/'); // Assuming '/' is your landing page route
-    }; // if login is successful
+    // const handleLoginLinkClick = () => {
+    //     navigate('/'); // Assuming '/' is your landing page route
+    // }; // if login is successful
 
 
 

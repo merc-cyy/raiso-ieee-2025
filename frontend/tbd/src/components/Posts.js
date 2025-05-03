@@ -1,129 +1,103 @@
-import React, {useState } from 'react';
+import React, {useEffect, useState } from 'react';
 
 
 function Posts() {
-  
-  
-  
-//   const [expandedPost, setExpandedPost] = useState(null);
+  const sampleJobs = [
+  {
+    id: 1,
+    title: "Software Engineer",
+    company: "Evanston Bicycles Recyclery",
+    location: "Evanston, IL",
+    description:
+      "Teach basic computer skills to bridge the digital divide and keep donated hardware alive.",
+    eligibility: "Must be 18+ with a passion for community tech literacy.",
+    skills: "JavaScript · React · Linux basics",
+  },
+  {
+    id: 2,
+    title: "Marketing Coordinator",
+    company: "Green Gardens Co‑op",
+    location: "Chicago, IL",
+    description: "Help us craft social posts that highlight sustainable urban farming.",
+    eligibility: "Open to high‑school graduates and above.",
+    skills: "Copy‑writing · Canva · Instagram/Threads",
+  },
+  {
+    id: 3,
+    title: "Community Tutor",
+    company: "Northside Literacy Center",
+    location: "Skokie, IL",
+    description: "Tutor adults preparing for the GED—training provided.",
+    eligibility: "Must pass a background check and complete orientation.",
+    skills: "Patience · Communication · Basic algebra",
+  },
+];
 
-//   // Hardcoded posts array with the desired format
-//   const posts = [
-//   {
-//     id: 1,
-//     role: 'Animal Shelter Volunteer',
-//     event: 'Pet Adoption Day',
-//     organization: 'Happy Tails Shelter',
-//     description: 'Help care for and find loving homes for our furry friends.',
-//   },
-//   {
-//     id: 2,
-//     role: 'Kids Camp Mentor',
-//     event: 'Summer Kids Camp',
-//     organization: 'Youth Empowerment Center',
-//     description: 'Guide children through fun, educational activities during camp.',
-//   },
-//   {
-//     id: 3,
-//     role: 'Healthcare Assistant',
-//     event: 'Community Health Fair',
-//     organization: 'HealthFirst',
-//     description: 'Support healthcare professionals in providing community services.',
-//   },
-//   {
-//     id: 4,
-//     role: 'Tech Tutor',
-//     event: 'Digital Literacy Workshop',
-//     organization: 'Tech4All',
-//     description: 'Teach basic computer skills to bridge the digital divide.',
-//   },
-//   {
-//     id: 5,
-//     role: 'Environmental Volunteer',
-//     event: 'Park Cleanup Day',
-//     organization: 'Green Earth',
-//     description: 'Join us in cleaning up local parks and green spaces.',
-//   },
-//   {
-//     id: 6,
-//     role: 'Community Organizer',
-//     event: 'Neighborhood Beautification',
-//     organization: 'Community Cares',
-//     description: 'Coordinate projects that improve local neighborhoods.',
-//   },
-//   {
-//     id: 7,
-//     role: 'Food Bank Volunteer',
-//     event: 'Food Drive & Distribution',
-//     organization: 'Feeding Hands',
-//     description: 'Help collect, pack, and distribute food to those in need.',
-//   },
-//   {
-//     id: 8,
-//     role: 'Arts & Culture Assistant',
-//     event: 'Local Arts Festival',
-//     organization: 'Creative City',
-//     description: 'Support community art events and showcase local talent.',
-//   },
-//   {
-//     id: 9,
-//     role: 'Sports Mentor',
-//     event: 'Youth Sports Day',
-//     organization: 'Active Minds',
-//     description: 'Coach and mentor young athletes in sports and teamwork.',
-//   },
-//   {
-//     id: 10,
-//     role: 'Library Assistant',
-//     event: 'Book Donation Drive',
-//     organization: 'Community Library',
-//     description: 'Assist with organizing events that promote literacy and reading.',
-//   },
-// ];
+  const [expandedJobId, setExpandedJobId] = useState(null); // init all cards as non-expanded
+  const toggleExpand = (id) => {
+    setExpandedJobId(prevId => (prevId === id ? null : id));
+  }
+  const [allJobs, setAllJobs] = useState([]);
+  const [loading, setLoading] = useState(true);//loading state
+  const [error, setError] = useState(null);//any error
+  const [currentPage, setCurrentPage] = useState(1);//for pagination
+  const itemsPerPage = 6;//first index
 
+ 
 
-  // // Toggle the expanded state for a post
-  // const toggleExpand = (id) => {
-  //   if (expandedPost === id) {
-  //     setExpandedPost(null);
-  //   } else {
-  //     setExpandedPost(id);
-  //   }
-  // };
+  const backendApiUrl = 'http://localhost:5001';
+  
+
+  useEffect(()  => {
+
+      setLoading(true);
+      setError(null);
+      const fetchAllJobs = async () => {
+          try
+          {
+            const res = await fetch (`${backendApiUrl}/posts/`)
+
+            if (!res.ok){
+              throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            const data = await res.json();
+            setAllJobs(data); 
+          }
+          catch(error)
+          {
+            setError(error.message);//set error to be that message
+            setAllJobs([]);
+          }
+          finally{
+            setLoading(false);
+          }
+        };
+
+        fetchAllJobs();
+      },
+      []);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;//first index
+  const endIndex = startIndex + itemsPerPage;// lastindex
+  const currentJobs = allJobs.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(allJobs.length / itemsPerPage);//number of pages
+
+  //moving to the next page
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  if (loading) {
+    return <div className='container mt-4 text-center'>Loading volunteer opportunities...</div>;
+  }
+
+  if (error) {
+    return <div className='container mt-4 text-center'>Error loading volunteer opportunities: {error}</div>;
+  }
 
   return (
-    // <div className="container mt-4">
-    //   <h2 className='custom-posts-title'>Volunteer Opportunities</h2>
-    //     {posts.map((post) => (
-        //     <div key={post.id} className="card my-4 p-3 custom-card-bg-color custom-border">
-        //         <div className="d-flex justify-content-center align-items-center">
-        //             <div className='d-flex flex-column align-items-center'>
-        //                 <h5 className='custom-job-role'>{post.role}</h5>
-        //                 <p className="mb-1">
-        //                     <a class="nav-link active" aria-current="page" href="#"> {post.event} </a>
-        //                 </p>
-        //                 <p className="mb-1">
-        //                     <a class="nav-link active" aria-current="page" href="#"> {post.organization} </a>
-        //                 </p>
-        //             </div>
-        //         <button className="btn btn-link" onClick={() => toggleExpand(post.id)}>
-                   
-        //         {expandedPost === post.id ? (
-        //             <i className="bi bi-caret-up-fill custom-arrow"></i>//if expanded show up arrow
-        //         ) : (
-        //             <i className="bi bi-caret-down-fill custom-arrow"></i>//else show down arrow
-        //         )}
-        //         </button>
-        //     </div>
-        //         {expandedPost === post.id && (
-        //         <div className='d-flex flex-column text-center'>
-        //             <p className="mt-2 custom-description-color">{post.description}</p>
-        //             <button className="btn btn-primary w-auto custom-btn-post-color">I am interested!</button>
-        //         </div>
-        //     )}
-        // </div>
-    //   ))}
-    // </div>
 
     <div className='container mt-4'>
       <div className='row'>
@@ -131,21 +105,32 @@ function Posts() {
               <div className='pt-4 text-center'>
                 <h2> Volunteer Opportunities</h2>
               </div>
+              <div className='d-flex'>
+                <button className={`btn btn-primary me-auto ${currentPage === 1 ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage - 1)}> Previous</button>
+                <button className={`btn btn-primary  ${currentPage === totalPages ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage + 1)}> Next</button>
+              </div>
               <div className='pt-4 d-flex flex-column align-items-center row-gap-4'>
 
-                  <div className="card custom-card">
-                      <div className="card-header">
-                        Software Engineer
+                {currentJobs.map((job)  => (     
+                    <div className="card custom-card">
+                      <div className="card-header"  >
+                        {job.title}
                       </div>
                       <div className="card-body">
                         <div className='d-flex justify-content-between'>
-                          <h5 className="card-title">Evanston Bicycles Recyclery</h5>
-                          <h6>Evanston, IL</h6>
+                          <h5 className="card-title" style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => toggleExpand(job.id)} >{job.organization}</h5>
+                          <h6>{job.location}</h6>
                         </div>
-                        <p className="card-text">Teach basic computer skills to bridge the digital divide </p>
+                        <p className="card-text">{job.description} </p>
+                        {expandedJobId === job.id && (
+                          <>
+                          <p className="card-text mt-2"><b>Eligibility:</b> {job.requirement}</p>
+                          <p className="card-text"><b>Skills:</b> {job.skills}</p>
+                          </>
+                        )} 
                         <div className='d-flex'>
                           <div className='col-9'>
-                            <a href="#" className="btn btn-primary">Apply</a>
+                            <a href={job.url} className="btn btn-primary" target="_blank"  rel="noopener noreferrer">Apply</a>
                           </div>
                           <div className='col-3 d-flex justify-content-around'>
                             <i className="bi bi-hand-thumbs-up xl"></i>
@@ -153,107 +138,11 @@ function Posts() {
                           </div>
                         </div>
                       </div>
-                    </div>
-
-
-
-<div className="card custom-card">
-                      <div className="card-header">
-                        Software Engineer
-                      </div>
-                      <div className="card-body">
-                        <div className='d-flex justify-content-between'>
-                          <h5 className="card-title">Evanston Bicycles Recyclery</h5>
-                          <h6>Evanston, IL</h6>
-                        </div>
-                        <p className="card-text">Teach basic computer skills to bridge the digital divide </p>
-                        <div className='d-flex'>
-                          <div className='col-9'>
-                            <a href="#" className="btn btn-primary">Apply</a>
-                          </div>
-                          <div className='col-3 d-flex justify-content-around'>
-                            <i className="bi bi-hand-thumbs-up xl"></i>
-                            <i className="bi bi-hand-thumbs-down"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-
-
-
-<div className="card custom-card">
-                      <div className="card-header">
-                        Software Engineer
-                      </div>
-                      <div className="card-body">
-                        <div className='d-flex justify-content-between'>
-                          <h5 className="card-title">Evanston Bicycles Recyclery</h5>
-                          <h6>Evanston, IL</h6>
-                        </div>
-                        <p className="card-text">Teach basic computer skills to bridge the digital divide </p>
-                        <div className='d-flex'>
-                          <div className='col-9'>
-                            <a href="#" className="btn btn-primary">Apply</a>
-                          </div>
-                          <div className='col-3 d-flex justify-content-around'>
-                            <i className="bi bi-hand-thumbs-up xl"></i>
-                            <i className="bi bi-hand-thumbs-down"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-
-<div className="card custom-card">
-                      <div className="card-header">
-                        Software Engineer
-                      </div>
-                      <div className="card-body">
-                        <div className='d-flex justify-content-between'>
-                          <h5 className="card-title">Evanston Bicycles Recyclery</h5>
-                          <h6>Evanston, IL</h6>
-                        </div>
-                        <p className="card-text">Teach basic computer skills to bridge the digital divide </p>
-                        <div className='d-flex'>
-                          <div className='col-9'>
-                            <a href="#" className="btn btn-primary">Apply</a>
-                          </div>
-                          <div className='col-3 d-flex justify-content-around'>
-                            <i className="bi bi-hand-thumbs-up xl"></i>
-                            <i className="bi bi-hand-thumbs-down"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-<div className="card custom-card">
-                      <div className="card-header">
-                        Software Engineer
-                      </div>
-                      <div className="card-body">
-                        <div className='d-flex justify-content-between'>
-                          <h5 className="card-title">Evanston Bicycles Recyclery</h5>
-                          <h6>Evanston, IL</h6>
-                        </div>
-                        <p className="card-text">Teach basic computer skills to bridge the digital divide </p>
-                        <div className='d-flex'>
-                          <div className='col-9'>
-                            <a href="#" className="btn btn-primary">Apply</a>
-                          </div>
-                          <div className='col-3 d-flex justify-content-around'>
-                            <i className="bi bi-hand-thumbs-up xl"></i>
-                            <i className="bi bi-hand-thumbs-down"></i>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-
-
-
+                    </div>))} 
               </div>
-          </div>
+            </div>
+              
+          
 
           <div className='col vh-100'>
             <div className='row text-center h-40'> 
@@ -387,6 +276,8 @@ function Posts() {
           </div>
       </div>
     </div>
+
+
   );
 };
 
