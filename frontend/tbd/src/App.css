@@ -168,3 +168,8 @@
 .footer-color{
   background-color: #ede7f4;
 }
+
+.bi-hand-thumbs-up.liked {
+  color: green;
+  /* Or any green color you prefer */
+}

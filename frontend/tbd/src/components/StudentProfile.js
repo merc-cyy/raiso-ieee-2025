@@ -4,13 +4,6 @@ import  { useState, useEffect } from 'react';
 
 function StudentProfile(){
     //get user data from local storage
-    // const authToken = localStorage.getItem('authToken');//get the access tken
-    // const userAuthData = JSON.parse(localStorage.getItem('userAuthData'));
-    // const profileData = JSON.parse(localStorage.getItem('profileData'));
-    // const userId = userAuthData.id
-
-    // const firstName = profileData.first_name
-    // const lastName = profileData.last_name
     const backendApiUrl = 'http://localhost:5001';
     const navigate = useNavigate();
 
@@ -32,6 +25,15 @@ function StudentProfile(){
     const [profile, setProfile] = useState(null);//get profile
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [email, setEmail] = useState(""); //"" is the intial value 
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [city, setCity] = useState('');
+    const [state, setState] = useState('');
+    const [zip, setZip] = useState('');
+    const [interests, setInterests] = useState('');
+    
+
 
     useEffect(() => { 
         if (!authToken)//if there is no token
@@ -64,6 +66,7 @@ function StudentProfile(){
                     throw new Error(errorData.error || 'Failed to fetch profile');
                 }
                 const data = await res.json();
+                console.log('data on frontend', data);
                 setProfile(data.user);
 
             }
@@ -79,7 +82,49 @@ function StudentProfile(){
             }
         };
         getProfile();
-    }, [authToken, navigate, backendApiUrl]);
+    }, []);
+
+    console.log('profile', profile)
+
+    const handleSubmit = async (e) => { 
+        e.preventDefault();
+
+        const formData = {
+            email: email === "" && profile && profile[0]?.email ? profile[0].email : email,
+            firstName: firstName === "" && profile && profile[0]?.first_name ? profile[0].first_name : firstName,
+            lastName: lastName === "" && profile && profile[0]?.last_name ? profile[0].last_name : lastName,
+            city: city === "" && profile && profile[0]?.city ? profile[0].city : city,
+            state: state === "" && profile && profile[0]?.state ? profile[0].state : state,
+            zipcode: zip === "" && profile && profile[0]?.zipcode ? profile[0].zipcode : zip,
+            description: interests === "" && profile && profile[0]?.description ? profile[0].description : interests,
+        };
+        try
+        {
+            const res = await fetch(`${backendApiUrl}/auth/updateme`, { // Or your specific update profile endpoint
+            method: 'POST', // Or 'PATCH' depending on your API design
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`, // Ensure you're sending the auth token
+            },
+            body: JSON.stringify(formData),
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(errorData.error || 'Failed to update profile');
+        }
+
+        const data = await res.json();
+        console.log('Profile updated successfully:', data);
+        // Optionally, provide user feedback (e.g., a success message)
+        // You might also want to update the local 'profile' state with the new data
+        //setProfile(data.user); 
+        }
+        catch(error)
+        {
+            console.error('Update failed:', error);
+        }
+    };
 
 
     const handleLogout = () => {
@@ -102,8 +147,19 @@ function StudentProfile(){
         }
 
     if (profile){
-    const firstName = profile.first_name
-    const last_name = profile.last_name
+        const firstNameDisplay = profile[0].first_name;
+        const lastNameDisplay = profile[0].last_name;
+        const emailDisplay = profile[0]?.email;
+        const cityDisplay = profile[0]?.city;
+        const stateDisplay = profile[0]?.state;
+        const zipDisplay = profile[0]?.zipcode;
+        const descriptionDisplay = profile[0]?.description
+        // setEmail(profile[0]?.email || '');
+        // setFirstName(profile[0]?.first_name || '');
+        // setLastName(profile[0]?.last_name || '');
+        // setCity(profile[0]?.city || '');
+        // setState(profile[0]?.state || '');
+        // setZip(profile[0]?.zipcode || '');
     
 
     return(
@@ -117,7 +173,7 @@ function StudentProfile(){
                             <i class="bi bi-person-fill fs-1 custom-icon-color"></i>
                         </div>
                     <div>
-                    <h6>Mercy Muiruri</h6>
+                    <h6>{firstNameDisplay} {lastNameDisplay}</h6>
                     {/* Optional: User Role */}
                     <p className="text-muted small">Student</p>
                             </div>
@@ -136,7 +192,7 @@ function StudentProfile(){
                             <Link to="/studentprofile" className="nav-link custom-dashboard text-decoration-none">Profile</Link>
                         </li>
                         <li className="mb-2">
-                            <span to="#" onClick={handleLogout} className="nav-link custom-dashboard text-decoration-none">Logout</span>
+                            <span to="#" onClick={handleLogout} className="nav-link custom-dashboard text-decoration-none">  Logout</span>
                         </li>
                         {/* Add more sidebar links as needed */}
                     </ul>
@@ -161,34 +217,21 @@ function StudentProfile(){
                                 <div className='container pt-1 custom-form-section'>
                                     <div class="row g-3 pb-3">
                                         <div class="col">
-                                            <label for="inputEmail" class="form-label">Email</label>
-                                                <input type="email" class="form-control" placeholder='example@gmail.com' id="inputEmail" />
+                                            <label for="inputEmail" class="form-label" >Email</label>
+                                                <input type="email" class="form-control" placeholder='example@gmail.com' id="inputEmail"  defaultValue={emailDisplay} onChange={e => setEmail(e.target.value)}/>
                                         </div>
                                     </div>
 
-
-                                    <div class='row g-3 pb-3'>
-                                        <div class="col-md-6">
-                                            <label for="inputPassword1" class="form-label">Password</label>
-                                                <input type="password" class="form-control" id="inputPassword1"/>
-                                        </div>
-
-                                        <div class="col-md-6">
-                                            <label for="inputPassword2" class="form-label">Retype Password</label>
-                                                <input type="password" class="form-control" id="inputPassword2"/>
-                                        </div>
-
-                                    </div>
 
                                     <div class='row g-3 pb-3'>
                                         <div class="col-md-6">
                                             <label for="firstname" class="form-label">First Name</label>
-                                                <input type="text" class="form-control" placeholder='Willie' id="firstname"/>
+                                                <input type="text" class="form-control" placeholder='Willie' id="firstname"  defaultValue={firstNameDisplay} onChange={e => setFirstName(e.target.value)}/>
                                         </div>
 
                                         <div class="col-md-6">
                                             <label for="lastname" class="form-label">Last Name</label>
-                                                <input type="text" class="form-control"placeholder='Wildcat' id="lastname"/>
+                                                <input type="text" class="form-control"placeholder='Wildcat' id="lastname"  defaultValue={lastNameDisplay} onChange={e => setLastName(e.target.value)}/>
                                         </div>
 
                                     </div>
@@ -196,7 +239,7 @@ function StudentProfile(){
                                     <div className='row g-3 pb-3'>
                                         <div class="col-md-6">
                                             <label for="inputCity" class="form-label">City</label>
-                                                <input type="text" class="form-control" id="inputCity"/>
+                                                <input type="text" class="form-control" id="inputCity"  defaultValue={cityDisplay} onChange={e => setCity(e.target.value)}/>
                                         </div>
 
                                         <div class="col-md-4">
@@ -258,7 +301,7 @@ function StudentProfile(){
 
                                         <div class="col-md-2">
                                             <label for="inputZip" class="form-label">Zip</label>
-                                                <input type="text" class="form-control" id="inputZip"/>
+                                                <input type="text" class="form-control" id="inputZip"  defaultValue={zipDisplay} onChange={e => setZip(e.target.value)}/>
                                         </div>
                                     </div>
 
@@ -287,30 +330,15 @@ function StudentProfile(){
                                 <div className='container pt-1 custom-form-section'>
                                     <div className='row g-3 pb-3'>
                                         <div class="col">
-                                            <label for="interests" class="form-label">Interests</label>
-                                                <select id="interests" class="form-select">
-                                                    <option selected>I want to...</option>
-                                                    <option value="AL">work with small children</option>
-                                                    <option value="AK">work with animals and animal shelters</option>
-                                                    <option value="AZ">be involved in healthcare</option>
-                                                    <option value="environment">Engage in environmental conservation</option>
-                                                    <option value="education">Tutor or mentor students</option>
-                                                    <option value="food">Support local food banks</option>
-                                                    <option value="senior">Assist senior citizens</option>
-                                                    <option value="community">Community development & outreach</option>
-                                                    <option value="arts">Promote arts and culture</option>
-                                                    <option value="disaster">Participate in disaster relief</option>
-                                                </select>
+                                            <label for="otherinterests" class="form-label"></label>
+                                                <textarea class="form-control" id="otherinterests" rows="3"  defaultValue={descriptionDisplay} onChange={e => setInterests(e.target.value)}></textarea>
                                         </div>
                                     </div>
 
-                                    <div className='row g-3 pb-3'>
-                                        <div class="col">
-                                            <label for="otherinterests" class="form-label">Others</label>
-                                                <textarea class="form-control" id="otherinterests" rows="3"></textarea>
-                                        </div>
-                                    </div>
+                                </div>
 
+                                <div class="col-12">
+                                    <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Save Changes</button>
                                 </div>
 
                     

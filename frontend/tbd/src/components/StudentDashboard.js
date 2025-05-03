@@ -31,71 +31,39 @@ function StudentDashboard() {
     const [profile, setProfile] = useState(null);//get profile
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [allLikedJobs, setAllLikedJobs] = useState([]);
 
-    useEffect(() => { 
-        if (!authToken)//if there is no token
-        {
-            navigate('/');
-            return;
-        }
+    useEffect(() => {
+        setLoading(true);
+        setError(null);
 
-        const getProfile = async () => {
-
-            setLoading(true);
-
+        const fetchLikedJobs = async () => {
             try
             {
-                const res = await fetch(`${backendApiUrl}/auth/me`, {
-                    headers: {
-                        'Authorization' :  `Bearer ${authToken}`,
-                    },
-                });//fetch profile with the token to authorize
-
-                if (!res.ok)
-                {
-                    if (res.status === 401)
-                    {
-                        localStorage.removeItem('authToken');//token expired
-                        navigate('/');
-                        return;
-                    }
-                    const errorData = await res.json();
-                    throw new Error(errorData.error || 'Failed to fetch profile');
+                const res = await fetch(`${backendApiUrl}/interests/${userId}`)
+                if (!res.ok){
+                    throw new Error(`HTTP error! status: ${res.status}`);
                 }
                 const data = await res.json();
-                setProfile(data.user);
-
+                setAllLikedJobs(data); //all my liked jobs
             }
 
             catch(error)
             {
-                setError(error.message);
+                setError(error.message);//set error to be that message
+                setAllLikedJobs([]);
 
             }
-            finally
+            finally 
             {
                 setLoading(false);
             }
         };
-        getProfile();
-    }, [authToken, navigate, backendApiUrl]);
+        fetchLikedJobs();
+            },
+        [userId]);
 
 
-    const [interestedPosts, setInterestedPosts] = useState([
-        {
-            id: 1,
-            role: 'Animal Shelter Volunteer',
-            organization: 'Happy Tails Shelter',
-            description: 'Help care for and find loving homes for our furry friends.',
-        },
-        {
-            id: 3,
-            role: 'Healthcare Assistant',
-            organization: 'HealthFirst',
-            description: 'Support healthcare professionals in providing community services.',
-        },
-        // so interestedposts has the array of posts and the setInterestedPosts is the function to update them
-    ]);
 
     const [buttonText, setbuttonText] = useState("Apply");
 
@@ -104,6 +72,11 @@ function StudentDashboard() {
         setbuttonText(selectedText);
 
     };
+
+    const [expandedJobId, setExpandedJobId] = useState(null); // init all cards as non-expanded
+    const toggleExpand = (id) => {
+    setExpandedJobId(prevId => (prevId === id ? null : id));
+    }
 
     const handleLogout = () => {
         localStorage.removeItem('authToken');
@@ -170,27 +143,41 @@ function StudentDashboard() {
                 {/* Main Content - List of Interested Posts */}
                 <div className="col-md-9 p-4">
                     <h2 className="custom-posts-title mb-4">Interested Opportunities</h2>
-                    {interestedPosts.length > 0 ? (
-                        interestedPosts.map((post) => (
-                            <div key={post.id} className="card my-3 p-3 custom-card-bg-color custom-border d-flex flex-row justify-content-between align-items-center">
-                                <div>
-                                    <h5 className="custom-job-role mb-1">{post.role}</h5>
-                                    <p className="mb-0"><span className="fw-bold">Organization:</span> {post.organization}</p>
-                                    <p className="mb-0 custom-description-color">{post.description.substring(0, 100)}...</p> {/* Show a snippet */}
-                                </div>
-                                <div>
-                                    <div className='dropdown'>
-                                        <button className="btn btn-success custom-btn-interestedpost-color dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{buttonText}</button>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#" onClick={handleDropdownItemClick}>Applied!</a></li>
-                                            <li><a class="dropdown-item" href="#" onClick={handleDropdownItemClick}>Not Applied</a></li>
-                                            <li><a class="dropdown-item" href="#" onClick={handleDropdownItemClick}>Started Applying</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+                    {allLikedJobs.length > 0 ? (
+                        allLikedJobs.map((job) => (
+                            <div className="card custom-card mt-3" key={job.id}>
+                      <div className="card-header" >
+                        {job.title}
+                      </div>
+                      <div className="card-body">
+                        <div className='d-flex justify-content-between'>
+                          <h5 className="card-title" style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => toggleExpand(job.id)} >{job.organization}</h5>
+                          <h6>{job.location}</h6>
+                        </div>
+                        <p className="card-text">{job.description} </p>
+                        {expandedJobId === job.id && (
+                          <>
+                          <p className="card-text mt-2"><b>Eligibility:</b> {job.requirement}</p>
+                          <p className="card-text"><b>Skills:</b> {job.skills}</p>
+                          </>
+                        )} 
+                        <div className='d-flex'>
+                          <div className='col-9'>
+                            <a href={job.url} className="btn btn-primary" target="_blank"  rel="noopener noreferrer">Apply</a>
+                          </div>
+                          <div className='col-3 d-flex justify-content-around'>
+                            <i className='bi bi-hand-thumbs-up xl liked' ></i>
+                            <i className="bi bi-hand-thumbs-down"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                         ))
-                    ) : (
+                    ) : 
+                    
+                    
+                    (
                         <p>You haven't shown interest in any opportunities yet.</p>
                     )}
                 </div>

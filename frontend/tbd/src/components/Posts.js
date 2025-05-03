@@ -2,36 +2,73 @@ import React, {useEffect, useState } from 'react';
 
 
 function Posts() {
-  const sampleJobs = [
-  {
-    id: 1,
-    title: "Software Engineer",
-    company: "Evanston Bicycles Recyclery",
-    location: "Evanston, IL",
-    description:
-      "Teach basic computer skills to bridge the digital divide and keep donated hardware alive.",
-    eligibility: "Must be 18+ with a passion for community tech literacy.",
-    skills: "JavaScript · React · Linux basics",
-  },
-  {
-    id: 2,
-    title: "Marketing Coordinator",
-    company: "Green Gardens Co‑op",
-    location: "Chicago, IL",
-    description: "Help us craft social posts that highlight sustainable urban farming.",
-    eligibility: "Open to high‑school graduates and above.",
-    skills: "Copy‑writing · Canva · Instagram/Threads",
-  },
-  {
-    id: 3,
-    title: "Community Tutor",
-    company: "Northside Literacy Center",
-    location: "Skokie, IL",
-    description: "Tutor adults preparing for the GED—training provided.",
-    eligibility: "Must pass a background check and complete orientation.",
-    skills: "Patience · Communication · Basic algebra",
-  },
-];
+  //get authentication and userid
+  const authToken = localStorage.getItem('authToken');
+  let userAuthData = null;
+  let userId = null;
+  const storedUserAuthData = localStorage.getItem('userAuthData');
+  if (storedUserAuthData) 
+      {
+      try {
+          userAuthData = JSON.parse(storedUserAuthData);
+          userId = userAuthData?.id;
+          } 
+      catch (error) {
+          console.error("Error parsing userAuthData:", error);
+          }
+      }
+  console.log("Auth Token:", authToken);
+  console.log("User ID:", userId);
+
+  //function to like a post
+  const handleLike = async (jobId) => {
+
+    console.log(`About to like job with ID: ${jobId}`);
+    if (likedJobs.includes(jobId)) {
+      console.log(`Job ID ${jobId} is already liked in this session.`);
+      return; // Don't proceed with the API call or state update
+      }
+    console.log(`Job id not yet liked so will proceed with api call`);
+
+    try{ //userid and jobid --> message saying done!
+      const res = await fetch(`${backendApiUrl}/interests/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          user_id: userId,
+          job_id: jobId
+        })
+      });
+
+      if (res.ok)
+      {
+        const data = await res.json();
+        setLikedJobs(prevLikedJobs => [...prevLikedJobs, jobId]);//add to the list of liked
+
+      }
+      else
+      {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Liking Action Failed');
+            
+      }
+
+    }
+    catch(error){
+      console.error('Liking Action Faileed')
+
+    }
+  };
+
+  //likedjobs
+  const [likedJobs, setLikedJobs] = useState([]);
+  const isJobLiked = (jobid) => {
+    return likedJobs.includes(jobid)
+  }//fn for is job liked?
+
+
+
+  
 
   const [expandedJobId, setExpandedJobId] = useState(null); // init all cards as non-expanded
   const toggleExpand = (id) => {
@@ -112,8 +149,8 @@ function Posts() {
               <div className='pt-4 d-flex flex-column align-items-center row-gap-4'>
 
                 {currentJobs.map((job)  => (     
-                    <div className="card custom-card">
-                      <div className="card-header"  >
+                    <div className="card custom-card" key={job.id}>
+                      <div className="card-header" >
                         {job.title}
                       </div>
                       <div className="card-body">
@@ -133,12 +170,13 @@ function Posts() {
                             <a href={job.url} className="btn btn-primary" target="_blank"  rel="noopener noreferrer">Apply</a>
                           </div>
                           <div className='col-3 d-flex justify-content-around'>
-                            <i className="bi bi-hand-thumbs-up xl"></i>
+                            <i className={`bi bi-hand-thumbs-up xl ${isJobLiked(job.id) ? 'liked' : ''}`} style= {{cursor: 'pointer'}} onClick={() => handleLike(job.id)}></i>
                             <i className="bi bi-hand-thumbs-down"></i>
                           </div>
                         </div>
                       </div>
-                    </div>))} 
+                    </div>
+                  ))} 
               </div>
             </div>
               

@@ -157,7 +157,43 @@ router.post('/login', async (req, res) => {
 
 
 router.get('/me', async (req, res) => {
-  console.log("GETTING PROFILE")
+  //console.log("GETTING PROFILE")
+  const { authorization } = req.headers;
+  if (!authorization) return res.status(401).json({ error: 'Missing token' });
+
+  const token = authorization.replace('Bearer ', '');
+  //console.log("token is:", token)
+  
+  const {
+    data,
+    error
+  } = await supabase.auth.getUser(token);
+
+  
+  // console.log("error", error)
+  // console.log("data", data)
+
+  if (error || !data) return res.status(401).json({ error: 'Invalid token' });
+
+  let val = data.user.id.trim();
+  //console.log("id", val)
+  //console.log("Type of data.user.id before Supabase query:", typeof val); // Added console log
+  const { data: profiledata, error: profileerror } = await supabase
+    .from('users')
+    .select('*')
+    .eq('userauth_id', val);
+    
+
+  // console.log("PROFILE:", profiledata)
+  if (profileerror) return res.status(500).json({ error: profileerror.message });
+  // console.log("PROFILE:", profiledata)
+  // console.log("Perror:", profileerror)
+  res.json({ user: profiledata });
+});
+
+router.post('/updateme', async (req, res) => {
+  console.log("Updating profile");
+
   const { authorization } = req.headers;
   if (!authorization) return res.status(401).json({ error: 'Missing token' });
 
@@ -175,18 +211,55 @@ router.get('/me', async (req, res) => {
 
   if (error || !data) return res.status(401).json({ error: 'Invalid token' });
 
-  console.log("id", data.user.id)
-  const { profiledata, profileerror } = await supabase
-    .from('public.users')
-    .select('*')
-    .eq('userauth_id', data.user.id)
-    .single();
+  let val = data.user.id.trim();
+  console.log("id", val)
 
-  console.log("PROFILE:", profiledata)
-  if (profileerror) return res.status(500).json({ error: profileerror.message });
-  console.log("PROFILE:", profiledata)
-  console.log("Perror:", profileerror)
-  res.json({ user: profiledata });
-});
+  const {
+        email,
+        firstName,
+        lastName,
+        city,
+        state,
+        zipcode,
+        description
+    } = req.body;//from the frontend
+
+  try
+  {
+    const {data: userData, error: userError} = await supabase
+      .from('users') // Replace 'users' with the actual name of your public users table
+      .update({
+        email: email,
+        first_name: firstName,
+        last_name: lastName,
+        city: city,
+        state: state,
+        zipcode: zipcode,
+        description: description,
+      })
+      .eq('userauth_id', val) // Ensure you only update the record matching the logged-in user's ID
+      .select(); // Optional: Select the updated data to send back
+
+
+    if (userError)
+    {
+      console.error("Error updating user in public.users table:", userError);
+      return res.status(500).json({ error: 'Failed to update profile' });
+    }
+
+    if (userData)
+    {
+      console.log("User profile updated in public.users:", userData[0]);
+      return res.status(200).json({ message: 'Profile updated successfully', user: userData[0] });
+    }
+  }
+
+  catch(error)
+  {
+    console.error('Error during profile update:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  
+  }
+})
 
 export default router;
