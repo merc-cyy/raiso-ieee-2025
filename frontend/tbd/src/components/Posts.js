@@ -143,14 +143,14 @@ function Posts() {
                 <h2> Volunteer Opportunities</h2>
               </div>
               <div className='d-flex'>
-                <button className={`btn btn-primary me-auto ${currentPage === 1 ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage - 1)}> Previous</button>
-                <button className={`btn btn-primary  ${currentPage === totalPages ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage + 1)}> Next</button>
+                <button className={`me-auto btn btn-primary  custom-btn-post-color ${currentPage === 1 ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage - 1)}> Previous</button>
+                <button className={`btn btn-primary custom-btn-post-color ${currentPage === totalPages ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage + 1)}> Next</button>
               </div>
               <div className='pt-4 d-flex flex-column align-items-center row-gap-4'>
 
                 {currentJobs.map((job)  => (     
-                    <div className="card custom-card" key={job.id}>
-                      <div className="card-header" >
+                    <div className="card custom-card custom-card-bg-color" key={job.id}>
+                      <div className="card-header card-header-bg-color" >
                         {job.title}
                       </div>
                       <div className="card-body">
@@ -167,7 +167,9 @@ function Posts() {
                         )} 
                         <div className='d-flex'>
                           <div className='col-9'>
-                            <a href={job.url} className="btn btn-primary" target="_blank"  rel="noopener noreferrer">Apply</a>
+                            <a href={job.url} className="btn btn-primary custom-btn-post-color" target="_blank"  rel="noopener noreferrer"  style= {{cursor: 'pointer', backgroundColor: isJobLiked(job.id) ? '#B1DABE' : '', color: isJobLiked(job.id) ? 'black' : '',}} onClick={() => handleLike(job.id)}>
+                              {isJobLiked(job.id) ? 'Applied!' : 'Apply'}
+                            </a>
                           </div>
                           <div className='col-3 d-flex justify-content-around'>
                             <i className={`bi bi-hand-thumbs-up xl ${isJobLiked(job.id) ? 'liked' : ''}`} style= {{cursor: 'pointer'}} onClick={() => handleLike(job.id)}></i>
@@ -186,12 +188,12 @@ function Posts() {
             <div className='row text-center h-40'> 
               {/* <i className="bi bi-person-circle"  style='font-size: 50em;'></i> */}
               <div className="icon-container" style={{width: "100%", height:"100%"}}>
-                <i className="bi bi-person-circle" style={{fontSize: "10em"}}></i>
+                <i className="bi bi-person-circle" style={{fontSize: "10em", color: '#8CABF7'}}></i>
               </div>
             </div>
 
             <div className='row'>
-                <button className='btn btn-secondary'>Customize your Posts!</button>
+                <button className='btn btn-secondary btn-poster '>Customize your Posts!</button>
             </div>
 
             <div className='row'>
@@ -203,7 +205,7 @@ function Posts() {
                             <p className='ps-3'>Use this space to search for any specific interests you may have and our model will recommend them for you!</p>
                         </div>
 
-                        <div className='container pt-1 custom-form-section'>
+                        <div className='container pt-1 custom-form-section custom-form-blurb-color'>
                             <div class="row g-3 pb-3">
                                 <div class="col">
                                     <label for="title" className="form-label">Title</label>
@@ -291,7 +293,7 @@ function Posts() {
                                 <p className='ps-3 mt-2'>Our application uses the information you enter here to match you to relevant volunteer opportunities around your area. Don't be shy to include any skills you may have as well as areas you are interested in volunteering.</p>
                         </div>
 
-                        <div className='container pt-1 custom-form-section'>
+                        <div className='container pt-1 custom-form-section custom-form-blurb-color'>
                             <div className='row g-3 pb-3'>
                                 <div class="col">
                                     <label for="interests" class="form-label"></label> 
@@ -300,7 +302,7 @@ function Posts() {
                             </div>
 
                             <div class="col-12">
-                                    <button type="submit" className="btn btn-primary" >Generate</button>
+                                    <button type="submit" className="btn btn-primary custom-btn-post-color" >Generate</button>
                             </div>
 
                         </div>

@@ -13,9 +13,9 @@ function PostsNavBar(){
 
             <nav className='navbar navbar-expand-lg custom-navbar-bg-color py-2'>
                 <div className='container-fluid'>
-                    <a className="navbar-brand me-4 d-flex pt-4" href="#">
+                    <a className="navbar-brand me-4 d-flex pt-4" href="/">
                         <i className="bi bi-person-arms-up d-inline-block align-text-top fs-3 custom-icon-color pb-2"></i>
-                        Engage!
+                        NUVolunteers!
                     </a>
 
                     {/*Hamburger Menu*/}
@@ -32,8 +32,9 @@ function PostsNavBar(){
 
                         <ul className="navbar-nav ms-auto\">
                             <li className="nav-item\">
-                                <a className="nav-link " href="#\">
-                                   <i class="bi bi-person-fill fs-1 custom-icon-color"></i>
+                                <a className="nav-link active custom-dashboard" href="/">
+                                   {/* <i class="bi bi-person-fill fs-1 custom-icon-color"></i> */}
+                                   Logout
                                 </a>
                             </li>
                         </ul>

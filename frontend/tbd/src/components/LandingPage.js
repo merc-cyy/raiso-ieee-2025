@@ -1,5 +1,7 @@
 import React, {useEffect, useState, useMemo }  from 'react';
 import { useNavigate } from 'react-router-dom';
+import ContactForm from './ContactForm';
+import Footer from './Footer'
 
 
 import animalShelter from '../images/animal_shelter_volunteer.png';
@@ -10,6 +12,7 @@ import giveBackEnvironment from '../images/give_back_environment.jpg';
 import northwestern_image from '../images/Northwestern.png';
 import food_drive from '../images/food-drive.png';
 import npos from '../images/NPOs.jpg';
+
 
 
 
@@ -136,10 +139,10 @@ function LandingPage(){
     return(
         <div className="d-flex flex-column ">
             <nav className='navbar navbar-expand-lg custom-navbar-bg-color py-2'>
-                <div className='container-fluid'>
-                    <a className="navbar-brand me-4 d-flex align-items-center" href="#">
+                <div className='container-fluid d-flex'>
+                    <a className="navbar-brand me-4 d-flex align-items-center" href="/">
                         <i className="bi bi-person-arms-up d-inline-block align-text-top fs-2 custom-icon-color me-2"></i>
-                        Engage!
+                        NUVolunteers!
                     </a>
 
                     {/* Hamburger Menu */}
@@ -147,17 +150,23 @@ function LandingPage(){
                         <span className="navbar-toggler-icon"></span>
                     </button>
 
-                    <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
-                        <ul className="navbar-nav">
-                            
+                    <div className="collapse navbar-collapse d-flex" id="navbarNav">
+                        <div className="navbar-nav d-flex align-self-start">
+                            <li className="nav-item  "> 
+                                <a href="/" className="nav-link active custom-dashboard" aria-current="page" onClick={handleSignIn}>About Us</a>
+                            </li>
+                            <li className="nav-item "> 
+                                <a className="nav-link active custom-dashboard" aria-current="page" onClick={handleSignIn}>Meet the Team</a>
+                            </li>
+                        </div>
+                        <div className="navbar-nav me-2 d-flex align-self-end">
                             <li className="nav-item me-2"> 
                                 <a className="nav-link active custom-dashboard" aria-current="page" onClick={handleSignIn}>Sign Up</a>
                             </li>
                             <li className="nav-item">
                                 <a className="nav-link active custom-dashboard" aria-current="page" onClick={handleLogInClick}>Log In</a>
                             </li>
-                    
-                        </ul>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -220,13 +229,18 @@ function LandingPage(){
                 </div>
             )}
 
+            
+
             <div className='mt-5 pt-5 '>
+                <hr className="container" /> {/* Separating line */}
                 <div className='container pop'>
                     <div className='m-5 landing-page-blurbs mt-5 text-center fs-3 d-flex flex-column align-items-center'>
-                       <b> Sponsored by Northwestern students,</b> Engage is a platform that connects college students <br></br>to open volunteer opportunities around their campuses.
+                       <b> Sponsored by Northwestern students,</b> NUVolunteers is a platform that connects college students <br></br>to open volunteer opportunities around their campuses.
                         <img className='custom-landing-image' src={northwestern_image} alt='Northwestern University' ></img>
                     </div>
                 </div>
+
+            <hr className="container" /> {/* Separating line */}
 
                 <div className='container pop'>
                     <div className='m-5 landing-page-blurbs mt-5 text-center fs-3 d-flex flex-column align-items-center'>
@@ -244,11 +258,15 @@ function LandingPage(){
                     </div>
                 </div> */}
 
+
+            <hr className="container" /> {/* Separating line */}
+
+            <ContactForm />
+
+            <Footer />
+
+
             </div>
-
-
-
-
         </div>
     );
 }

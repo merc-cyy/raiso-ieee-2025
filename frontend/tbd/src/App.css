@@ -1,10 +1,10 @@
 .App {
   text-align: center;
-  background-color: #F3E3FF;
+  background-color: #B8C0FF !important;
 }
 
 .custom-navbar-bg-color{ 
-  background-color: #EDD5FF;
+  background-color: #C8B6FF;
 }
 
 .navbar-brand{
@@ -12,8 +12,8 @@
 }
 
 .custom-btn {
-  background-color: #cfdbf6;
-  border: 1px solid #f3eeb4;
+  background-color: #BBD0FF;
+  border: 1px solid #FFD6FF;
   /* if you want to remove the border */
 }
 .custom-img{
@@ -47,8 +47,8 @@
 
 .custom-card-bg-color{
   
-  background-color: #A487E7;
-  color: #fefae0;
+  background-color: #EAC8F7;
+  color: #000000;
 
 }
 
@@ -76,7 +76,7 @@
 
 
 .custom-btn-post-color{
-  background-color: #fefae0;
+  background-color: #BBD0FF;
   color:black;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .custom-btn-post-color:hover{
-  background-color: #BBD0FF;
+  background-color: #B8C0FF;
   color: #fefae0;
 }
 
@@ -166,10 +166,39 @@
 }
 
 .footer-color{
-  background-color: #ede7f4;
+  background-color: #f1eff3;
 }
 
 .bi-hand-thumbs-up.liked {
   color: green;
   /* Or any green color you prefer */
+}
+
+.card-header-bg-color
+{
+  background-color: #F9D2FF;
+}
+
+.btn-poster{
+  background-color: #FFE7C2;
+  color: black;
+}
+
+.btn-poster:hover{
+  
+  background-color: #FFE7C2;
+  color: black;
+
+}
+
+.custom-form-blurb-color{
+  background-color: #F3D7E1;
+}
+
+.sidebar-color{
+  background-color: #C8B6FF;
+}
+
+.custom-width{
+  width : 80%;
 }

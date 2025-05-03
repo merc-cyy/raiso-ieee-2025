@@ -164,8 +164,8 @@ function StudentProfile(){
 
     return(
 
-        <div className='bg-light row'>
-            <div className="col-md-3 bg-fefae0 p-4 rounded shadow"> {/* Similar background to navbar, rounded corners, shadow */}
+        <div className=' row'>
+            <div className="col-md-3 bg-fefae0 sidebar-color p-4 rounded shadow"> {/* Similar background to navbar, rounded corners, shadow */}
 
                     <div className="d-flex align-items-center mb-3">
                         <div className="me-2">
@@ -214,7 +214,7 @@ function StudentProfile(){
                                     <p className='ps-3'>Input your profile info here!</p>
                                 </div>
 
-                                <div className='container pt-1 custom-form-section'>
+                                <div className='container pt-1 custom-form-section custom-form-blurb-color'>
                                     <div class="row g-3 pb-3">
                                         <div class="col">
                                             <label for="inputEmail" class="form-label" >Email</label>
@@ -327,7 +327,7 @@ function StudentProfile(){
                                         <p className='ps-3 mt-2'>Our application uses the information you enter here to match you to relevant volunteer opportunities around your area. Don't be shy to include any skills you may have as well as areas you are interested in volunteering.</p>
                                 </div>
 
-                                <div className='container pt-1 custom-form-section'>
+                                <div className='container pt-1 custom-form-section custom-form-blurb-color'>
                                     <div className='row g-3 pb-3'>
                                         <div class="col">
                                             <label for="otherinterests" class="form-label"></label>

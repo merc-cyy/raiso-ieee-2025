@@ -105,17 +105,17 @@ function StudentDashboard() {
 
     
     return (
-        <div className=" bg-light d-flex full-viewport"> 
+        <div className="  d-flex full-viewport"> 
             <div className='row '>
-                <div className="col-md-3 bg-fefae0 p-4 rounded shadow"> {/* Similar background to navbar, rounded corners, shadow */}
+                <div className="col-md-3 bg-fefae0 sidebar-color p-4 rounded shadow"> {/* Similar background to navbar, rounded corners, shadow */}
 
-                    <div className="d-flex align-items-center mb-3">
+                    <div className="d-flex align-items-center mb-3 ">
                         <div className="me-2">
                             {/* User Icon (replace with your actual icon) */}
                             <i class="bi bi-person-fill fs-1 custom-icon-color"></i>
                         </div>
                     <div>
-                    <h6>Mercy Muiruri</h6>
+                    <h5>Mercy Muiruri</h5>
                     {/* Optional: User Role */}
                     <p className="text-muted small">Student</p>
                             </div>
@@ -141,12 +141,12 @@ function StudentDashboard() {
                 </div>
 
                 {/* Main Content - List of Interested Posts */}
-                <div className="col-md-9 p-4">
+                <div className="col-md-9 p-4 ">
                     <h2 className="custom-posts-title mb-4">Interested Opportunities</h2>
                     {allLikedJobs.length > 0 ? (
                         allLikedJobs.map((job) => (
-                            <div className="card custom-card mt-3" key={job.id}>
-                      <div className="card-header" >
+                <div className="card custom-card mt-3  custom-card-bg-color" key={job.id}>
+                      <div className="card-header card-header-bg-color" >
                         {job.title}
                       </div>
                       <div className="card-body">
@@ -163,7 +163,7 @@ function StudentDashboard() {
                         )} 
                         <div className='d-flex'>
                           <div className='col-9'>
-                            <a href={job.url} className="btn btn-primary" target="_blank"  rel="noopener noreferrer">Apply</a>
+                            <a href={job.url} className="btn btn-primary custom-btn-post-color" target="_blank"  rel="noopener noreferrer" style= {{cursor: 'pointer', backgroundColor:  '#B1DABE', color:  'black' }} >Applied</a>
                           </div>
                           <div className='col-3 d-flex justify-content-around'>
                             <i className='bi bi-hand-thumbs-up xl liked' ></i>
