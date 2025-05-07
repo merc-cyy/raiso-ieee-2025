@@ -159,7 +159,7 @@ function Posts() {
 
     <div className='container mt-4'>
       <div className='row'>
-          <div className='col-7'>
+          <div className='col-12 col-md-7'>
               <div className='pt-4 text-center'>
                 <h2> Volunteer Opportunities</h2>
               </div>
@@ -207,7 +207,7 @@ function Posts() {
               
           
 
-          <div className='col vh-100'>
+          <div className='col-12 col-md-5 vh-100'>
             <div className='row text-center h-40'> 
               {/* <i className="bi bi-person-circle"  style='font-size: 50em;'></i> */}
               <div className="icon-container" style={{width: "100%", height:"100%"}}>
