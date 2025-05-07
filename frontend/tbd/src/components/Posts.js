@@ -195,8 +195,8 @@ function Posts() {
                             </a>
                           </div>
                           <div className='col-3 d-flex justify-content-around'>
-                            <i className={`bi bi-hand-thumbs-up xl ${isJobLiked(job.id) ? 'liked' : ''}`} style= {{cursor: 'pointer'}} onClick={() => handleLike(job.id)}></i>
-                            <i className="bi bi-hand-thumbs-down"></i>
+                            <i className={`bi bi-hand-thumbs-up fs-3 ${isJobLiked(job.id) ? 'liked' : ''}`} style= {{cursor: 'pointer'}} onClick={() => handleLike(job.id)}></i>
+                            {/* <i className="bi bi-hand-thumbs-down"></i> */}
                           </div>
                         </div>
                       </div>
