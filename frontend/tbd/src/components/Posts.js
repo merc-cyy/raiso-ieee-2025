@@ -91,7 +91,7 @@ function Posts() {
 
  
 
-  const backendApiUrl = 'https://raiso-ieee-2025.onrender.com/';
+  const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
   
 
   useEffect(()  => {

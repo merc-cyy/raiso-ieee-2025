@@ -22,7 +22,7 @@ function LandingPage(){
     const navigate = useNavigate();// navigate to another page
 
     //state variables
-    const backendApiUrl = 'https://raiso-ieee-2025.onrender.com/';
+    const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
 
     const [showLoginModal, setShowLoginModal] = useState(false); // State to control the visibility of the login modal
     const [showChangePassword, setShowChangePassword] = useState(false); // State to control the visibility of the chagne password
