@@ -163,7 +163,7 @@ function Posts() {
               <div className='pt-4 text-center'>
                 <h2> Volunteer Opportunities</h2>
               </div>
-              <div className='d-flex'>
+              <div className='d-flex justify-content-between'>
                 <button className={`me-auto btn btn-primary  custom-btn-post-color ${currentPage === 1 ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage - 1)}> Previous</button>
                 <button className={`btn btn-primary custom-btn-post-color ${currentPage === totalPages ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage + 1)}> Next</button>
               </div>
