@@ -202,3 +202,8 @@
 .custom-width{
   width : 80%;
 }
+
+.highlight-meals {
+  border: 3px solid orange;
+  box-shadow: 0 0 10px rgba(255, 165, 0, 0.4);
+}

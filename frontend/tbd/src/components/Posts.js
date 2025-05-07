@@ -20,6 +20,11 @@ function Posts() {
   console.log("Auth Token:", authToken);
   console.log("User ID:", userId);
 
+  //function to apply a post
+  const handleApply = async (jobId) => {
+    setAppliedJobs(prevAppliedJobs => [...prevAppliedJobs, jobId]);
+    handleLike(jobId)
+  }
   //function to like a post
   const handleLike = async (jobId) => {
 
@@ -62,9 +67,13 @@ function Posts() {
 
   //likedjobs
   const [likedJobs, setLikedJobs] = useState([]);
+  const [appliedJobs, setAppliedJobs] = useState([]);
   const isJobLiked = (jobid) => {
     return likedJobs.includes(jobid)
-  }//fn for is job liked?
+  };//fn for is job liked?
+  const isJobApplied = (jobid) => {
+    return appliedJobs.includes(jobid)
+  }
 
 
 
@@ -82,7 +91,7 @@ function Posts() {
 
  
 
-  const backendApiUrl = 'http://localhost:5001';
+  const backendApiUrl = 'https://raiso-ieee-2025.onrender.com/';
   
 
   useEffect(()  => {
@@ -98,7 +107,19 @@ function Posts() {
               throw new Error(`HTTP error! status: ${res.status}`);
             }
             const data = await res.json();
-            setAllJobs(data); 
+
+            const prioritizedJobs = data.sort((a, b) => {
+            const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
+            const isA = a.organization === sponsor;
+            const isB = b.organization === sponsor;
+
+            if (isA && !isB) return -1;
+            if (!isA && isB) return 1;
+            return 0; // keep existing order if both are same type
+          }); 
+
+          setAllJobs(prioritizedJobs);
+            // setAllJobs(data); 
           }
           catch(error)
           {
@@ -149,7 +170,9 @@ function Posts() {
               <div className='pt-4 d-flex flex-column align-items-center row-gap-4'>
 
                 {currentJobs.map((job)  => (     
-                    <div className="card custom-card custom-card-bg-color" key={job.id}>
+                
+                      <div className={`card custom-card custom-card-bg-color ${job.organization === 'MEALS ON WHEELS NORTHEASTERN ILLINOIS' ? 'highlight-meals' : ''}`} key={job.id}>
+
                       <div className="card-header card-header-bg-color" >
                         {job.title}
                       </div>
@@ -167,8 +190,8 @@ function Posts() {
                         )} 
                         <div className='d-flex'>
                           <div className='col-9'>
-                            <a href={job.url} className="btn btn-primary custom-btn-post-color" target="_blank"  rel="noopener noreferrer"  style= {{cursor: 'pointer', backgroundColor: isJobLiked(job.id) ? '#B1DABE' : '', color: isJobLiked(job.id) ? 'black' : '',}} onClick={() => handleLike(job.id)}>
-                              {isJobLiked(job.id) ? 'Applied!' : 'Apply'}
+                            <a href={job.url} className="btn btn-primary custom-btn-post-color" target="_blank"  rel="noopener noreferrer"  style= {{cursor: 'pointer', backgroundColor: isJobLiked(job.id) && isJobApplied(job.id) ? '#B1DABE' : '', color: isJobLiked(job.id) && isJobLiked(job.id) ? 'black' : '',}} onClick={() => handleApply(job.id)}>
+                              {isJobLiked(job.id) && isJobApplied(job.id) ? 'Applied!' : 'Apply'}
                             </a>
                           </div>
                           <div className='col-3 d-flex justify-content-around'>

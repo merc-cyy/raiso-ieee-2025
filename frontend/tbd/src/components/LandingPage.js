@@ -22,7 +22,7 @@ function LandingPage(){
     const navigate = useNavigate();// navigate to another page
 
     //state variables
-    const backendApiUrl = 'http://localhost:5001';
+    const backendApiUrl = 'https://raiso-ieee-2025.onrender.com/';
 
     const [showLoginModal, setShowLoginModal] = useState(false); // State to control the visibility of the login modal
     const [showChangePassword, setShowChangePassword] = useState(false); // State to control the visibility of the chagne password
@@ -155,9 +155,7 @@ function LandingPage(){
                             <li className="nav-item  "> 
                                 <a href="/" className="nav-link active custom-dashboard" aria-current="page" onClick={handleSignIn}>About Us</a>
                             </li>
-                            <li className="nav-item "> 
-                                <a className="nav-link active custom-dashboard" aria-current="page" onClick={handleSignIn}>Meet the Team</a>
-                            </li>
+                
                         </div>
                         <div className="navbar-nav me-2 d-flex align-self-end">
                             <li className="nav-item me-2"> 
