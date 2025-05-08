@@ -13,7 +13,8 @@ function LoginPage() {
         event.preventDefault();
         console.log('Logging in with:', loginUsername, loginPassword);
 
-        const backendApiUrl = 'http://localhost:5001'; // Or your actual backend API URL
+        //const backendApiUrl = 'http://localhost:5001'; // Or your actual backend API URL
+        const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
 
         try {
             const response = await fetch(`${backendApiUrl}/auth/login`, {

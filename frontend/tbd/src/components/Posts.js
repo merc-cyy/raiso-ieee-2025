@@ -1,4 +1,5 @@
 import React, {useEffect, useState } from 'react';
+// Removed invalid Python import statement. If VolunteerRecommender is needed, implement or import it properly in JavaScript.
 
 
 function Posts() {
@@ -7,6 +8,8 @@ function Posts() {
   let userAuthData = null;
   let userId = null;
   const storedUserAuthData = localStorage.getItem('userAuthData');
+  const [interests, setInterests] = useState('');
+  
   if (storedUserAuthData) 
       {
       try {
@@ -17,7 +20,7 @@ function Posts() {
           console.error("Error parsing userAuthData:", error);
           }
       }
-  console.log("Auth Token:", authToken);
+  // console.log("Auth Token:", authToken);
   console.log("User ID:", userId);
 
   //function to apply a post
@@ -93,48 +96,97 @@ function Posts() {
 
   //const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
   const backendApiUrl = 'http://localhost:5001';
+  const fastApiUrl = 'http://127.0.0.1:8000';
+
   
 
   useEffect(()  => {
 
       setLoading(true);
       setError(null);
-      const fetchAllJobs = async () => {
-          try
-          {
-            const res = await fetch (`${backendApiUrl}/posts/`)
 
-            if (!res.ok){
+      const fetchAllJobs = async () => {
+          // try
+          // {
+          //   const res = await fetch (`${backendApiUrl}/posts/`)
+
+          //   if (!res.ok){
+          //     throw new Error(`HTTP error! status: ${res.status}`);
+          //   }
+          //   const data = await res.json();
+
+            // const prioritizedJobs = data.sort((a, b) => {
+            // const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
+            // const isA = a.organization === sponsor;
+            // const isB = b.organization === sponsor;
+
+            // if (isA && !isB) return -1;
+            // if (!isA && isB) return 1;
+            // return 0; // keep existing order if both are same type
+          //}); 
+
+          // setAllJobs(prioritizedJobs);
+          //   // setAllJobs(data); 
+          // }
+          // catch(error)
+          // {
+          //   setError(error.message);//set error to be that message
+          //   setAllJobs([]);
+          // }
+          // finally{
+          //   setLoading(false);
+          // }
+
+          console.log("SENDING GENERATE")
+
+          try
+        {
+          const res = await fetch(`${fastApiUrl}/recommend/`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type' : 'application/json'},
+          body : JSON.stringify({userid : userId})
+        }
+        );
+        if (!res.ok){
               throw new Error(`HTTP error! status: ${res.status}`);
             }
-            const data = await res.json();
+        console.log("SENT GENERATE")
+      
+        const data = await res.json();
+        console.log("DATA")
+        console.log(data)
+        const jobs = data.jobs
+        console.log(jobs)
+        const prioritizedJobs = jobs.sort((a, b) => {
+        const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
+        const isA = a.organization === sponsor;
+        const isB = b.organization === sponsor;
 
-            const prioritizedJobs = data.sort((a, b) => {
-            const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
-            const isA = a.organization === sponsor;
-            const isB = b.organization === sponsor;
+        if (isA && !isB) return -1;
+        if (!isA && isB) return 1;
+        return 0;}); // keep existing order if both are same type
 
-            if (isA && !isB) return -1;
-            if (!isA && isB) return 1;
-            return 0; // keep existing order if both are same type
-          }); 
+        setAllJobs(prioritizedJobs);
 
-          setAllJobs(prioritizedJobs);
-            // setAllJobs(data); 
-          }
-          catch(error)
-          {
-            setError(error.message);//set error to be that message
-            setAllJobs([]);
-          }
-          finally{
+        }
+        catch (error)
+        {
+          console.log("Couldn't generate recommended jobs.")
+          setError(error.message);//set error to be that message
+          setAllJobs([]);
+
+        }
+        finally{
             setLoading(false);
           }
+
+
         };
 
         fetchAllJobs();
       },
-      []);
+      [userId]);
 
   const startIndex = (currentPage - 1) * itemsPerPage;//first index
   const endIndex = startIndex + itemsPerPage;// lastindex
@@ -147,6 +199,10 @@ function Posts() {
       setCurrentPage(newPage);
     }
   };
+
+  // const handleGenerate = async (e) => {//CASEY
+    
+  // };
 
   if (loading) {
     return <div className='container mt-4 text-center'>Loading volunteer opportunities...</div>;
@@ -322,7 +378,7 @@ function Posts() {
                             <div className='row g-3 pb-3'>
                                 <div class="col">
                                     <label for="interests" class="form-label"></label> 
-                                        <textarea class="form-control" id="interests" rows="3"></textarea>
+                                        <textarea class="form-control" id="interests" rows="3" value={interests} onChange={(e) => setInterests(e.target.value)}></textarea>
                                 </div>
                             </div>
 
