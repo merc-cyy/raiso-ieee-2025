@@ -91,7 +91,8 @@ function Posts() {
 
  
 
-  const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+  //const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+  const backendApiUrl = 'http://localhost:5001';
   
 
   useEffect(()  => {
@@ -163,12 +164,13 @@ function Posts() {
               <div className='pt-4 text-center'>
                 <h2> Volunteer Opportunities</h2>
               </div>
-              <div className='d-flex justify-content-between'>
-                <button className={`me-auto btn btn-primary  custom-btn-post-color ${currentPage === 1 ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage - 1)}> Previous</button>
-                <button className={`btn btn-primary custom-btn-post-color ${currentPage === totalPages ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage + 1)}> Next</button>
-              </div>
-              <div className='pt-4 d-flex flex-column align-items-center row-gap-4'>
 
+              <div className='d-flex justify-content-center gap-5 flex-wrap mt-3'>
+                <button className={` btn btn-primary custom-btn-post-color mx-5 ${currentPage === 1 ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage - 1)}> Previous</button>
+                <button className={`btn btn-primary custom-btn-post-color mx-5 ${currentPage === totalPages ? 'disabled': ''}`} onClick={() => handlePageChange(currentPage + 1)}> Next</button>
+              </div>
+
+              <div className='pt-4 d-flex flex-column align-items-center row-gap-4'>
                 {currentJobs.map((job)  => (     
                 
                       <div className={`card custom-card custom-card-bg-color ${job.organization === 'MEALS ON WHEELS NORTHEASTERN ILLINOIS' ? 'highlight-meals' : ''}`} key={job.id}>
