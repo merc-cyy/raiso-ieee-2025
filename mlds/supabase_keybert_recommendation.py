@@ -29,8 +29,9 @@ class VolunteerRecommender:
     )
 
     def fit(self):
+        print("MODEL IS CALLED")
         # embed
-        self.embeddings = self.keybert_model.model.encode(
+        self.embeddings = self.keybert_model.encode(
             self.df['combined_text'].tolist(), convert_to_numpy=True
         )
 
