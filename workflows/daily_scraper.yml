@@ -1,0 +1,32 @@
+name: Daily VolunteerMatch Scraper
+
+on:
+  schedule:
+    - cron: '50 4 * * *'  # Runs daily at 11:50PM EST (4:50AM UTC)
+  workflow_dispatch:       # Optional: lets you run manually from GitHub
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: daily_scraper  # This is where your script lives
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          pip install selenium python-dotenv supabase
+
+      - name: Run scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python new_daily.py
