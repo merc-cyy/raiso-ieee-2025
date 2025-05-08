@@ -4,8 +4,8 @@ import  { useState, useEffect } from 'react';
 
 function StudentProfile(){
     //get user data from local storage
-    const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
-    //const backendApiUrl = 'http://localhost:5001';
+    //const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+    const backendApiUrl = 'http://localhost:5001';
     const navigate = useNavigate();
 
     const authToken = localStorage.getItem('authToken');

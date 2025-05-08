@@ -94,8 +94,8 @@ function Posts() {
 
  
 
-  const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
-  //const backendApiUrl = 'http://localhost:5001';
+  //const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+  const backendApiUrl = 'http://localhost:5001';
   const fastApiUrl = 'http://127.0.0.1:8000';
 
   
