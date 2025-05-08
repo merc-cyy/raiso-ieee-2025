@@ -47,59 +47,61 @@ function ContactForm() {
   };
 
   return (
-    <div className='container mt-5'>
-      <h2>Contact Us</h2>
-      <p>Want to get in touch?</p>
+    <div className='contact-form-container'>
+      <div className='container mt-5'>
+        <h2>Contact Us</h2>
+        <p>Want to get in touch?</p>
 
-      {submissionStatus === 'success' && (
-        <div className="alert alert-success">Thank you for your submission!</div>
-      )}
-      {submissionStatus === 'error' && (
-        <div className="alert alert-danger">There was an error submitting your form. Please try again.</div>
-      )}
-      {submissionStatus === 'submitting' && <div>Submitting...</div>}
+        {submissionStatus === 'success' && (
+          <div className="alert alert-success">Thank you for your submission!</div>
+        )}
+        {submissionStatus === 'error' && (
+          <div className="alert alert-danger">There was an error submitting your form. Please try again.</div>
+        )}
+        {submissionStatus === 'submitting' && <div>Submitting...</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label"><b>Name</b></label>
-          <input
-            type="text"
-            className="form-control"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label"><b>Name</b></label>
+            <input
+              type="text"
+              className="form-control"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
 
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label"><b>Email address</b></label>
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
-        </div>
+          <div className="mb-3">
+            <label htmlFor="email" className="form-label"><b>Email address</b></label>
+            <input
+              type="email"
+              className="form-control"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
+          </div>
 
-        <div className="mb-3">
-          <label htmlFor="message" className="form-label"><b>Message</b></label>
-          <textarea
-            className="form-control"
-            id="message"
-            rows="5"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-          ></textarea>
-        </div>
+          <div className="mb-3">
+            <label htmlFor="message" className="form-label"><b>Message</b></label>
+            <textarea
+              className="form-control"
+              id="message"
+              rows="5"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              required
+            ></textarea>
+          </div>
 
-        <button type="submit" className="btn btn-primary custom-btn-post-color">Submit</button>
-      </form>
-    </div>
+          <button type="submit" className="btn btn-primary custom-btn-post-color">Submit</button>
+        </form>
+      </div>
+      </div>
   );
 }
 
