@@ -1,4 +1,5 @@
 import React, {useEffect, useState } from 'react';
+// Removed invalid Python import statement. If VolunteerRecommender is needed, implement or import it properly in JavaScript.
 
 
 function Posts() {
@@ -7,6 +8,9 @@ function Posts() {
   let userAuthData = null;
   let userId = null;
   const storedUserAuthData = localStorage.getItem('userAuthData');
+  const [recommendedJobs, setRecommendedJobs] = useState(null);
+  const [interests, setInterests] = useState('');
+  
   if (storedUserAuthData) 
       {
       try {
@@ -93,6 +97,8 @@ function Posts() {
 
   //const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
   const backendApiUrl = 'http://localhost:5001';
+  const fastApiUrl = 'http://127.0.0.1:8000';
+
   
 
   useEffect(()  => {
@@ -148,6 +154,35 @@ function Posts() {
     }
   };
 
+  const handleGenerate = async (e) => {
+    console.log("SENDING GENERATE")
+    e.preventDefault();
+
+    try
+    {
+      const res = await fetch(`${fastApiUrl}/recommend/`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type' : 'application/json'},
+          body : JSON.stringify({userid : userId})
+        }
+      )
+      console.log("SENT GENERATE")
+      
+      const data = await res.json();
+      setRecommendedJobs(data)
+      console.log("DATA BELOW")
+      console.log(data)
+      
+
+    }
+    catch (error)
+    {
+      console.log("Couldn't generate recommended jobs.")
+
+    }
+  };
+
   if (loading) {
     return <div className='container mt-4 text-center'>Loading volunteer opportunities...</div>;
   }
@@ -171,7 +206,7 @@ function Posts() {
               </div>
 
               <div className='pt-4 d-flex flex-column align-items-center row-gap-4'>
-                {currentJobs.map((job)  => (     
+                {(recommendedJobs?.length > 0 ? recommendedJobs : currentJobs).map((job)  => (     
                 
                       <div className={`card custom-card custom-card-bg-color ${job.organization === 'MEALS ON WHEELS NORTHEASTERN ILLINOIS' ? 'highlight-meals' : ''}`} key={job.id}>
 
@@ -322,12 +357,12 @@ function Posts() {
                             <div className='row g-3 pb-3'>
                                 <div class="col">
                                     <label for="interests" class="form-label"></label> 
-                                        <textarea class="form-control" id="interests" rows="3"></textarea>
+                                        <textarea class="form-control" id="interests" rows="3" value={interests} onChange={(e) => setInterests(e.target.value)}></textarea>
                                 </div>
                             </div>
 
                             <div class="col-12">
-                                    <button type="submit" className="btn btn-primary custom-btn-post-color" >Generate</button>
+                                    <button type="submit" className="btn btn-primary custom-btn-post-color" onClick={handleGenerate} >Generate</button>
                             </div>
 
                         </div>

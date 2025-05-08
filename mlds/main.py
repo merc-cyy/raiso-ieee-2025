@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from supabase_tfidf_recommendation import VolunteerRecommender 
+from supabase_keybert_recommendation import VolunteerRecommender 
 from dotenv import load_dotenv
 import os
 from supabase import create_client, Client
@@ -57,9 +57,15 @@ def recommend(request: ExampleRequest):
         user_embedding = recommender.build_user_profile(user_id)
         print("USER RECOMMENDATIONS TAKEN INTO CONSIDERATION")
         recommendations = recommender.recommend_for_user(user_embedding, top_n=6)
-        print(f"RECOMMENDATIONS:{recommendations}")
+        # output_path = f"/tmp/recommendations_{user_id}.csv"
+        # recommendations.to_csv(output_path, index=False)
+        # print(f"Recommendations written to: {output_path}")
+        # Convert DataFrame to list of dictionaries
+        recommendations_list = recommendations.to_dict(orient="records")
+
+        # print(f"RECOMMENDATIONS:{recommendations_list}")
         return {
-            'jobs' : recommendations
+            'jobs' : recommendations_list
         }
     except Exception as e:
         import traceback
