@@ -11,6 +11,13 @@ from supabase import create_client
 import os
 from dotenv import load_dotenv
 
+from datetime import datetime, timedelta
+import pytz
+
+eastern = pytz.timezone("US/Eastern")
+now = datetime.now(eastern)
+cutoff_date = now - timedelta(days=1)
+
 load_dotenv()
 url = os.getenv("SUPABASE_URL")
 key = os.getenv("SUPABASE_KEY")
