@@ -66,7 +66,7 @@ class VolunteerRecommender:
         top_indices = similarities.argsort()[-top_n:][::-1]
         recommendations = self.df.iloc[top_indices].copy()
         recommendations['similarity'] = similarities[top_indices]
-        return recommendations[['id', 'title', 'description', 'similarity']]
+        return recommendations
     
     def paragraph_process(self, query_text, top_n=5):
         query_embedding = self.embedding_model.encode([query_text], convert_to_numpy=True)
