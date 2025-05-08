@@ -18,6 +18,16 @@ class VolunteerRecommender:
         self.df = pd.DataFrame(response.data)
         self.preprocess()
 
+    def preprocess(self):
+        self.df['combined_text'] = (
+            self.df['title'].fillna('') + ' ' +
+            self.df['organization'].fillna('') + ' ' +
+            self.df['description'].fillna('') + ' ' +
+            self.df['location'].fillna('') + ' ' +
+            self.df['skills'].fillna('') + ' ' +
+            self.df['requirement'].fillna('')
+    )
+
     def fit(self):
         # embed
         self.embeddings = self.keybert_model.model.encode(
@@ -28,6 +38,8 @@ class VolunteerRecommender:
         # fetch job id
         response = self.supabase.table('user_interests').select('job_id').eq('user_id', user_id).execute()
         job_ids = [row['job_id'] for row in response.data]
+        if not job_ids:
+            raise ValueError("User has no interests/jobs associated.")
         
         # fetch opportunity details
         opportunities = self.supabase.table(self.jobs_table).select(
@@ -53,3 +65,14 @@ class VolunteerRecommender:
         recommendations = self.df.iloc[top_indices].copy()
         recommendations['similarity'] = similarities[top_indices]
         return recommendations[['id', 'title', 'description', 'similarity']]
+    
+    def paragraph_process(self, query_text, top_n=5):
+        query_embedding = self.keybert_model.model.encode([query_text], convert_to_numpy=True)
+
+        similarities = cosine_similarity(query_embedding, self.embeddings).flatten()
+        top_indices = similarities.argsort()[-top_n:][::-1]
+
+        recommendations = self.df.iloc[top_indices].copy()
+        recommendations['similarity'] = similarities[top_indices]
+        return recommendations[['id', 'title', 'description', 'similarity']]
+
