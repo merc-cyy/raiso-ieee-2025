@@ -98,12 +98,14 @@ router.post('/signup', async (req, res) => {
 
     if (userError) {
             // If there's an error inserting into the 'users' table,
+            console.log({userError})
             return res.status(500).json({ error: userError.message });
         }///POTENTIAL BUG: ROLLING BACK?
 
     res.status(201).json({
       error: userData[0]
     })
+    
 
   }
 
@@ -251,6 +253,7 @@ router.post('/updateme', async (req, res) => {
     {
       console.log("User profile updated in public.users:", userData[0]);
       return res.status(200).json({ message: 'Profile updated successfully', user: userData[0] });
+
     }
   }
 
