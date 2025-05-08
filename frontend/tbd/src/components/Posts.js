@@ -8,7 +8,6 @@ function Posts() {
   let userAuthData = null;
   let userId = null;
   const storedUserAuthData = localStorage.getItem('userAuthData');
-  const [recommendedJobs, setRecommendedJobs] = useState(null);
   const [interests, setInterests] = useState('');
   
   if (storedUserAuthData) 
@@ -21,7 +20,7 @@ function Posts() {
           console.error("Error parsing userAuthData:", error);
           }
       }
-  console.log("Auth Token:", authToken);
+  // console.log("Auth Token:", authToken);
   console.log("User ID:", userId);
 
   //function to apply a post
@@ -105,42 +104,89 @@ function Posts() {
 
       setLoading(true);
       setError(null);
-      const fetchAllJobs = async () => {
-          try
-          {
-            const res = await fetch (`${backendApiUrl}/posts/`)
 
-            if (!res.ok){
+      const fetchAllJobs = async () => {
+          // try
+          // {
+          //   const res = await fetch (`${backendApiUrl}/posts/`)
+
+          //   if (!res.ok){
+          //     throw new Error(`HTTP error! status: ${res.status}`);
+          //   }
+          //   const data = await res.json();
+
+            // const prioritizedJobs = data.sort((a, b) => {
+            // const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
+            // const isA = a.organization === sponsor;
+            // const isB = b.organization === sponsor;
+
+            // if (isA && !isB) return -1;
+            // if (!isA && isB) return 1;
+            // return 0; // keep existing order if both are same type
+          //}); 
+
+          // setAllJobs(prioritizedJobs);
+          //   // setAllJobs(data); 
+          // }
+          // catch(error)
+          // {
+          //   setError(error.message);//set error to be that message
+          //   setAllJobs([]);
+          // }
+          // finally{
+          //   setLoading(false);
+          // }
+
+          console.log("SENDING GENERATE")
+
+          try
+        {
+          const res = await fetch(`${fastApiUrl}/recommend/`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type' : 'application/json'},
+          body : JSON.stringify({userid : userId})
+        }
+        );
+        if (!res.ok){
               throw new Error(`HTTP error! status: ${res.status}`);
             }
-            const data = await res.json();
+        console.log("SENT GENERATE")
+      
+        const data = await res.json();
+        console.log("DATA")
+        console.log(data)
+        const jobs = data.jobs
+        console.log(jobs)
+        const prioritizedJobs = jobs.sort((a, b) => {
+        const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
+        const isA = a.organization === sponsor;
+        const isB = b.organization === sponsor;
 
-            const prioritizedJobs = data.sort((a, b) => {
-            const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
-            const isA = a.organization === sponsor;
-            const isB = b.organization === sponsor;
+        if (isA && !isB) return -1;
+        if (!isA && isB) return 1;
+        return 0;}); // keep existing order if both are same type
 
-            if (isA && !isB) return -1;
-            if (!isA && isB) return 1;
-            return 0; // keep existing order if both are same type
-          }); 
+        setAllJobs(prioritizedJobs);
 
-          setAllJobs(prioritizedJobs);
-            // setAllJobs(data); 
-          }
-          catch(error)
-          {
-            setError(error.message);//set error to be that message
-            setAllJobs([]);
-          }
-          finally{
+        }
+        catch (error)
+        {
+          console.log("Couldn't generate recommended jobs.")
+          setError(error.message);//set error to be that message
+          setAllJobs([]);
+
+        }
+        finally{
             setLoading(false);
           }
+
+
         };
 
         fetchAllJobs();
       },
-      []);
+      [userId]);
 
   const startIndex = (currentPage - 1) * itemsPerPage;//first index
   const endIndex = startIndex + itemsPerPage;// lastindex
@@ -154,34 +200,9 @@ function Posts() {
     }
   };
 
-  const handleGenerate = async (e) => {
-    console.log("SENDING GENERATE")
-    e.preventDefault();
-
-    try
-    {
-      const res = await fetch(`${fastApiUrl}/recommend/`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type' : 'application/json'},
-          body : JSON.stringify({userid : userId})
-        }
-      )
-      console.log("SENT GENERATE")
-      
-      const data = await res.json();
-      setRecommendedJobs(data)
-      console.log("DATA BELOW")
-      console.log(data)
-      
-
-    }
-    catch (error)
-    {
-      console.log("Couldn't generate recommended jobs.")
-
-    }
-  };
+  // const handleGenerate = async (e) => {//CASEY
+    
+  // };
 
   if (loading) {
     return <div className='container mt-4 text-center'>Loading volunteer opportunities...</div>;
@@ -206,7 +227,7 @@ function Posts() {
               </div>
 
               <div className='pt-4 d-flex flex-column align-items-center row-gap-4'>
-                {(recommendedJobs?.length > 0 ? recommendedJobs : currentJobs).map((job)  => (     
+                {currentJobs.map((job)  => (     
                 
                       <div className={`card custom-card custom-card-bg-color ${job.organization === 'MEALS ON WHEELS NORTHEASTERN ILLINOIS' ? 'highlight-meals' : ''}`} key={job.id}>
 
@@ -362,7 +383,7 @@ function Posts() {
                             </div>
 
                             <div class="col-12">
-                                    <button type="submit" className="btn btn-primary custom-btn-post-color" onClick={handleGenerate} >Generate</button>
+                                    <button type="submit" className="btn btn-primary custom-btn-post-color" >Generate</button>
                             </div>
 
                         </div>

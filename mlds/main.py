@@ -39,7 +39,7 @@ jobs = {}
 # Define request schema
 class ExampleRequest(BaseModel):
     userid: str
-
+recommender = VolunteerRecommender(supabase)
 @app.post("/recommend/")
 def recommend(request: ExampleRequest):
     try:
@@ -48,7 +48,7 @@ def recommend(request: ExampleRequest):
         print("JUST STARTING")
         user_id = request.userid
         print(f"USERID:{user_id}")
-        recommender = VolunteerRecommender(supabase)
+        
         print("INIT IS DONE")
         recommender.fetch_data()
         print("Before MODEL FIT")
@@ -56,7 +56,7 @@ def recommend(request: ExampleRequest):
         print("MODEL FIT IS DONE")
         user_embedding = recommender.build_user_profile(user_id)
         print("USER RECOMMENDATIONS TAKEN INTO CONSIDERATION")
-        recommendations = recommender.recommend_for_user(user_embedding, top_n=6)
+        recommendations = recommender.recommend_for_user(user_embedding, top_n=1000)
         # output_path = f"/tmp/recommendations_{user_id}.csv"
         # recommendations.to_csv(output_path, index=False)
         # print(f"Recommendations written to: {output_path}")
