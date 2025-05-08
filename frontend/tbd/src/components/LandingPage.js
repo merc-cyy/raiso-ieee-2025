@@ -22,7 +22,8 @@ function LandingPage(){
     const navigate = useNavigate();// navigate to another page
 
     //state variables
-    const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+    //const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+    const backendApiUrl = 'http://localhost:5001';
 
     const [showLoginModal, setShowLoginModal] = useState(false); // State to control the visibility of the login modal
     const [showChangePassword, setShowChangePassword] = useState(false); // State to control the visibility of the chagne password
@@ -150,14 +151,14 @@ function LandingPage(){
                         <span className="navbar-toggler-icon"></span>
                     </button>
 
-                    <div className="collapse navbar-collapse d-flex" id="navbarNav">
+                    <div className="collapse navbar-collapse justify-content-between align-items-center" id="navbarNav">
                         <div className="navbar-nav d-flex align-self-start">
                             <li className="nav-item  "> 
                                 <a href="/" className="nav-link active custom-dashboard" aria-current="page" onClick={handleSignIn}>About Us</a>
                             </li>
                 
                         </div>
-                        <div className="navbar-nav me-2 d-flex align-self-end">
+                        <div className="navbar-nav d-flex flex-row gap-2 ms-auto">
                             <li className="nav-item me-2"> 
                                 <a className="nav-link active custom-dashboard" aria-current="page" onClick={handleSignIn}>Sign Up</a>
                             </li>
@@ -171,7 +172,7 @@ function LandingPage(){
 
             <div className='container'>
                 <div className="m-5 img-fluid mt-5 custom-img text-center " style={backgroundStyle}>
-                    <div className='content-overlay justify-content-end'>
+                    <div className='content-overlay justify-content-end '>
                             {/* Conditionally render the slide text if it exists for the current image index */}
                             {slideTexts[currentImageIndex] && (
                                 <h1 className="display-5 text-white mb-3 text-outline-black">{slideTexts[currentImageIndex]}</h1>
@@ -179,7 +180,7 @@ function LandingPage(){
 
                             {/* Container for the Go to Postings buttons */}
                             <div className="d-flex justify-content-center custom-gap">
-                                <button className="btn btn-primary btn-lg custom-btn-post-color" onClick={handleLogInClick}>See Our Open Postings!</button>
+                                <button className="btn btn-primary btn-lg custom-btn-post-color rounded-pill shadow" onClick={handleLogInClick}>See Our Open Postings!</button>
                             </div>
                     </div>
                 </div>
@@ -189,7 +190,7 @@ function LandingPage(){
             {/* Login Modal */}
             {showLoginModal && (
                 <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex="-1">
-                    <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-dialog modal-dialog-centered ">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">Log In</h5>
@@ -234,7 +235,7 @@ function LandingPage(){
                 <div className='container pop'>
                     <div className='m-5 landing-page-blurbs mt-5 text-center fs-3 d-flex flex-column align-items-center'>
                        <b> Sponsored by Northwestern students,</b> NUVolunteers is a platform that connects college students <br></br>to open volunteer opportunities around their campuses.
-                        <img className='custom-landing-image' src={northwestern_image} alt='Northwestern University' ></img>
+                        <img className='custom-landing-image ' src={northwestern_image} alt='Northwestern University' ></img>
                     </div>
                 </div>
 

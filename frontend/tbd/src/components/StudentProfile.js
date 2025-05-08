@@ -4,7 +4,8 @@ import  { useState, useEffect } from 'react';
 
 function StudentProfile(){
     //get user data from local storage
-    const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+    //const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+    const backendApiUrl = 'http://localhost:5001';
     const navigate = useNavigate();
 
     const authToken = localStorage.getItem('authToken');
@@ -191,8 +192,8 @@ function StudentProfile(){
                         <li className="mb-2 ms-2">
                             <Link to="/studentprofile" className="nav-link custom-dashboard text-decoration-none">Profile</Link>
                         </li>
-                        <li className="mb-2">
-                            <span to="#" onClick={handleLogout} className="nav-link custom-dashboard text-decoration-none">  Logout</span>
+                        <li className="mb-2 ms-2">
+                            <span role="button" onClick={handleLogout} className="nav-link custom-dashboard text-decoration-none">Logout</span>
                         </li>
                         {/* Add more sidebar links as needed */}
                     </ul>
@@ -338,7 +339,7 @@ function StudentProfile(){
                                 </div>
 
                                 <div class="col-12">
-                                    <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Save Changes</button>
+                                    <button type="submit" className="btn btn-primary custom-btn-post-color rounded-pill shadow" onClick={handleSubmit}>Save Changes</button>
                                 </div>
 
                     

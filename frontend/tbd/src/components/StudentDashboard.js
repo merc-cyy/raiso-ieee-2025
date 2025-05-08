@@ -8,7 +8,8 @@ function StudentDashboard() {
     // const firstName = profileData.first_name
     // const lastName = profileData.last_name
 
-    const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+    //const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+    const backendApiUrl = 'http://localhost:5001';
     const navigate = useNavigate();
     
     const authToken = localStorage.getItem('authToken');
@@ -166,8 +167,8 @@ function StudentDashboard() {
                             <a href={job.url} className="btn btn-primary custom-btn-post-color" target="_blank"  rel="noopener noreferrer" style= {{cursor: 'pointer', backgroundColor:  '#B1DABE', color:  'black' }} >Applied</a>
                           </div>
                           <div className='col-3 d-flex justify-content-around'>
-                            <i className='bi bi-hand-thumbs-up xl liked' ></i>
-                            <i className="bi bi-hand-thumbs-down"></i>
+                            <i className='bi bi-hand-thumbs-up xl liked fs-3' ></i>
+                            {/* <i className="bi bi-hand-thumbs-down"></i> */}
                           </div>
                         </div>
                       </div>
