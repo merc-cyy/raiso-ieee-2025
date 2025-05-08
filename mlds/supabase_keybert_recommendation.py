@@ -1,5 +1,6 @@
 import pandas as pd
 from keybert import KeyBERT
+from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
 class VolunteerRecommender:
@@ -8,6 +9,7 @@ class VolunteerRecommender:
         self.jobs_table = jobs_table
         self.df = None
         self.keybert_model = KeyBERT('distilbert-base-nli-mean-tokens')
+        self.embedding_model = SentenceTransformer('distilbert-base-nli-mean-tokens')
         self.embeddings = None
 
     def fetch_data(self):
@@ -31,7 +33,7 @@ class VolunteerRecommender:
     def fit(self):
         print("MODEL IS CALLED")
         # embed
-        self.embeddings = self.keybert_model.encode(
+        self.embeddings = self.embedding_model.encode(
             self.df['combined_text'].tolist(), convert_to_numpy=True
         )
 
@@ -56,7 +58,7 @@ class VolunteerRecommender:
         ])
         
         # generate user embedding
-        user_embedding = self.keybert_model.model.encode([user_text], convert_to_numpy=True)
+        user_embedding = self.embedding_model.encode([user_text], convert_to_numpy=True)
         return user_embedding
 
     def recommend_for_user(self, user_embedding, top_n=5):
@@ -68,8 +70,7 @@ class VolunteerRecommender:
         return recommendations[['id', 'title', 'description', 'similarity']]
     
     def paragraph_process(self, query_text, top_n=5):
-        query_embedding = self.keybert_model.model.encode([query_text], convert_to_numpy=True)
-
+        query_embedding = self.embedding_model.encode([query_text], convert_to_numpy=True)
         similarities = cosine_similarity(query_embedding, self.embeddings).flatten()
         top_indices = similarities.argsort()[-top_n:][::-1]
 
