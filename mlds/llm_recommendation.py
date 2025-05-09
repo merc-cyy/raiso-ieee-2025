@@ -14,9 +14,8 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 
 class llmRecommender:
-    def __init__(self, supabase, blurb):
+    def __init__(self, supabase):
         self.supabase = supabase
-        self.blurb = blurb
         self.data = None
         self.embeddings = OpenAIEmbeddings()
         self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0)
@@ -61,13 +60,13 @@ class llmRecommender:
             retriever=self.retriever
         )
 
-    def recommend(self):
+    def recommend(self, blurb):
         # Build the QA chain
         self.build_qa_chain()
 
         # Get recommendations based on the query
         # the query is the blurb plus a given prompt
-        self.query = f"Based on the following blurb: {self.blurb}, recommend 20 relevant opportunities. (only the title)"
+        self.query = f"Based on the following blurb: {blurb}, recommend 20 relevant opportunities. (only the title)"
         response = self.qa_chain({"query": self.query})
         text = response['result']
 
