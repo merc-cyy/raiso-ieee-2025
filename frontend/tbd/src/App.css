@@ -69,6 +69,13 @@
   border-bottom: 2px solid #5f00b6;
 }
 
+.custom-navbar-bg-color {
+  background-color: #F4EDFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  position: relative;
+}
+
 /* Blurbs and images */
 .custom-landing-image {
   border-radius: 12px;

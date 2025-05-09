@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import Footer from './Footer';
-import Navbar from './LandingNavBar';
+import Navbar from './Navbar';
 
 
 
@@ -12,6 +12,8 @@ function Onboarding(){
     const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
     // const backendApiUrl = 'http://localhost:5001';
 
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const handleLogInClick = () => setShowLoginModal(true);    
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
     const [registrationError, setRegistrationError] = useState('');
     const [email, setEmail] = useState("");
@@ -76,7 +78,8 @@ function Onboarding(){
 
     return (
         <>
-      <Navbar />
+      <Navbar handleLogInClick={handleLogInClick} 
+      />
     <div className='container-fluid d-flex justify-content-center align-items-center py-5' style={{ backgroundColor: '#F4EDFF' }}>
         <div className='custom-form-box d-flex flex-column align-items-center shadow-lg'>
         <div className='text-center mt-4 custom-landing-text'>
