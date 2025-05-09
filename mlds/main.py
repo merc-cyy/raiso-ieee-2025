@@ -6,11 +6,8 @@ from dotenv import load_dotenv
 import os
 from supabase import create_client, Client
 
-<<<<<<< HEAD
 from llm_recommendation import llmRecommender
 
-=======
->>>>>>> 6894dbe805c1e1775b2e4ecc9037755070b7ac27
 app = FastAPI()
 load_dotenv()
 
@@ -67,6 +64,46 @@ def recommend(request: ExampleRequest):
         # print(f"Recommendations written to: {output_path}")
         # Convert DataFrame to list of dictionaries
         recommendations_list = recommendations.to_dict(orient="records")
+
+        # print(f"RECOMMENDATIONS:{recommendations_list}")
+        return {
+            'jobs' : recommendations_list
+        }
+    except Exception as e:
+        import traceback
+        print("bad ERROR OCCURRED:")
+        traceback.print_exc() 
+        return {"error": str(e)}
+
+
+
+
+# Define request schema
+class ExampleRequestGen(BaseModel):
+    blurb: str
+generator = llmRecommender(supabase)
+@app.post("/recommend/")
+def generate(req: ExampleRequestGen):
+    try:
+        # Load recommender once
+
+        print("JUST STARTING")
+        blurb = req.blurb
+        print(f"USERID:{blurb}")
+        
+        print("INIT IS DONE")
+        generator.fetch_data()
+        print("Before MODEL FIT")
+        generator.load_data()
+        print("MODEL FIT IS DONE")
+        generator.build_qa_chain()
+        print("USER RECOMMENDATIONS TAKEN INTO CONSIDERATION")
+        gen_recommendations = generator.recommend(blurb)
+        # output_path = f"/tmp/recommendations_{user_id}.csv"
+        # recommendations.to_csv(output_path, index=False)
+        # print(f"Recommendations written to: {output_path}")
+        # Convert DataFrame to list of dictionaries
+        recommendations_list = gen_recommendations.to_dict(orient="records")
 
         # print(f"RECOMMENDATIONS:{recommendations_list}")
         return {
