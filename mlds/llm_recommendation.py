@@ -16,13 +16,14 @@ from langchain.chains import RetrievalQA
 class llmRecommender:
     def __init__(self, supabase):
         self.supabase = supabase
-        self.data = None
+        self.df = None
         self.embeddings = OpenAIEmbeddings()
         self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0)
         self.vectorstore = None
         self.retriever = None
         self.qa_chain = None
         self.load_data()
+        self.df = None
 
     def fetch_data(self):
         # Fetch opportunities from the Supabase database
@@ -31,12 +32,11 @@ class llmRecommender:
         ).execute()
         # Load data into a DataFrame
         self.df = pd.DataFrame(response.data)
-        self.df["summarized"] = ("title: " + self.df.Title.str.strip() + "; description: " + 
-                                 self.df.Description.str.strip() + "; date: " + 
-                                 self.df.Date.str.strip() + "; skills: " + 
-                                 self.df.Skills.str.strip() + 
-                                 self.df.Date.str.strip() + "; requirements: " + 
-                                 self.df.Requirement.str.strip())
+        self.df["summarized"] = ("title: " + self.df.title.str.strip() + "; description: " + 
+                                 self.df.description.str.strip() + "; date: " + 
+                                 self.df.date.str.strip() + "; skills: " + 
+                                 self.df.skills.str.strip() + "; requirements: " + 
+                                 self.df.requirement.str.strip())
 
     def load_data(self):
         # Convert DataFrame to CSV format
@@ -80,7 +80,7 @@ class llmRecommender:
                 
                 try:
                     # Find the corresponding row in the DataFrame
-                    row = self.df[self.df['Title']==title]
+                    row = self.df[self.df['title']==title]
                     if not row.empty:
                         recommended_opportunities = pd.concat([recommended_opportunities, row])
                 except Exception as e:
