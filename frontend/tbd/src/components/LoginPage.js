@@ -13,6 +13,7 @@ function LoginPage() {
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
     const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+    //const backendApiUrl = 'http://localhost:5001';
 
     try {
       const response = await fetch(`${backendApiUrl}/auth/login`, {
