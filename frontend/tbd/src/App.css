@@ -1,0 +1,266 @@
+/* Hero Section */
+.custom-img {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.content-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 1rem;
+  z-index: 1;
+}
+
+/* Buttons */
+.custom-btn-post-color {
+  background-color: #D9C7FF;
+  color: black;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 50px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.custom-btn-post-color:hover {
+  background-color: #5f00b6;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* Navbar */
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #6A0DAD;
+  transition: color 0.3s ease;
+}
+.navbar-brand:hover {
+  color: #4E2A84 !important;
+}
+
+.navbar-nav .nav-link {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  transition: color 0.3s, border-bottom 0.3s;
+  border-bottom: 2px solid transparent;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #5f00b6 !important;
+  border-bottom: 2px solid #5f00b6;
+}
+
+.custom-navbar-bg-color {
+  background-color: #F4EDFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  position: relative;
+}
+
+/* Blurbs and images */
+.custom-landing-image {
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  margin-top: 1rem;
+}
+
+.landing-page-blurbs {
+  max-width: 900px;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.contact-form-container {
+  margin-bottom: 5rem;
+  padding-bottom: 2rem;
+}
+
+/* Footer */
+.footer-color {
+  background-color: #f8f4ff;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  color: #444;
+  border-top: 1px solid #e2d6f3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.footer-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.footer-top h6,
+.footer-top p {
+  margin: 0;
+}
+
+.footer-middle {
+  display: flex;
+  gap: 1rem;
+  margin: 0.5rem 0;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.footer-middle a {
+  color: #666;
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
+}
+
+.footer-middle a:hover {
+  color: #5f00b6;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  font-size: 0.75rem;
+  color: #777;
+  line-height: 1.3;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .custom-img {
+    height: 70vh;
+  }
+  .content-overlay h1 {
+    font-size: 1.5rem;
+  }
+  .custom-btn-post-color {
+    font-size: 0.9rem;
+    padding: 0.5rem 1.5rem;
+  }
+  .landing-page-blurbs {
+    font-size: 1rem;
+  }
+  .footer-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Text shadow for contrast */
+.text-outline-black {
+  text-shadow: 0px 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.custom-form-box {
+  background-color: white;
+  max-width: 700px;
+  width: 100%;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.custom-form-section {
+  background-color: #f9f7ff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.custom-form-section h5 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+input.form-control,
+textarea.form-control,
+select.form-select {
+  font-size: 0.95rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+label {
+  margin-top: 1rem;
+}
+
+.bouncy-button {
+  animation: bounceBtn 2.5s infinite;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.bouncy-button:hover {
+  transform: scale(1.1);
+  background-color: #5f00b6 !important;  /* Replace with your hover color */
+  color: white !important;               /* Replace if needed */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes bounceBtn {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+a[href^="http"], a[href^="mailto:"] {
+  position: relative;
+  color: #7114d5;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a[href^="http"]::after, a[href^="mailto:"]::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background-color: #5f00b6;
+  transform: scaleX(0);
+  transform-origin: right; /* Start from right */
+  transition: transform 0.3s ease;
+}
+
+a[href^="http"]:hover::after, a[href^="mailto:"]:hover::after {
+  transform: scaleX(1);
+  transform-origin: left; /* Animate toward the left */
+}
+
+.liked{
+  color:green;
+}
