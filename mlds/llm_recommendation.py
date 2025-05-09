@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import openai
 import tiktoken
+import tempfile
 
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader
@@ -35,7 +36,6 @@ class llmRecommender:
     def preprocess(self):
         self.df['summarized'] = (
             self.df['title'].fillna('') + ' ' +
-            self.df['organization'].fillna('') + ' ' +
             self.df['description'].fillna('') + ' ' +
             self.df['location'].fillna('') + ' ' +
             self.df['skills'].fillna('') + ' ' +
@@ -43,12 +43,20 @@ class llmRecommender:
     )
 
     def load_data(self):
-        # Convert DataFrame to CSV format
-        csv_data = self.df[['summarized']].to_csv(index=False)
-        # Create a CSVLoader instance
-        loader = CSVLoader(file_path=csv_data)
-        # Load documents from the CSV data
-        documents = loader.load()
+        with tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".csv") as tmp_file:
+            self.df[['summarized']].to_csv(tmp_file.name, index=False)
+            tmp_file.flush()
+            print("csv data okay:", tmp_file.name)
+
+            loader = CSVLoader(file_path=tmp_file.name)
+            documents = loader.load()
+        # # Convert DataFrame to CSV format
+        # csv_data = self.df['summarized'].to_csv(index=False)
+        # print("csv data okay")
+        # # Create a CSVLoader instance
+        # loader = CSVLoader(file_path=csv_data)
+        # # Load documents from the CSV data
+        # documents = loader.load()
         # Split documents into smaller chunks
         text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         texts = text_splitter.split_documents(documents)
@@ -70,10 +78,10 @@ class llmRecommender:
 
         # Get recommendations based on the query
         # the query is the blurb plus a given prompt
-        self.query = f"Based on the following blurb: {blurb}, recommend 20 relevant opportunities. (only the title)"
-        response = self.qa_chain({"query": self.query})
+        self.query = f"Based on the following blurb: {blurb}, Give 20 suggestions. (only the title)"
+        response = self.qa_chain.invoke({"query": self.query})
         text = response['result']
-
+        print(text)
         # parse the result to extract the recommended opportunities
         recommended_opportunities = pd.DataFrame()
         for line in text.split('\n'):
@@ -84,7 +92,7 @@ class llmRecommender:
                 
                 try:
                     # Find the corresponding row in the DataFrame
-                    row = self.df[self.df['title']==title]
+                    row = self.df[self.df['title'].str.contains(title)]
                     if not row.empty:
                         recommended_opportunities = pd.concat([recommended_opportunities, row])
                 except Exception as e:
