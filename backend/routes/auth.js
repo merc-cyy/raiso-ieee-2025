@@ -62,7 +62,7 @@ router.post('/signup', async (req, res) => {
   })
 
   if (!email || !password){
-    console.log("error: ", authError.message)
+    console.log("Missing email or password");
     return res.status(400).json({error: "Email and password are needed"})
   }
 
@@ -112,6 +112,8 @@ router.post('/signup', async (req, res) => {
               }
             ])
             .select();//select new row 
+    console.log("Insert result:", { userData, userError });
+
       
 
     if (userError) {
