@@ -82,7 +82,7 @@ def recommend(request: ExampleRequest):
 class ExampleRequestGen(BaseModel):
     blurb: str
 generator = llmRecommender(supabase)
-@app.post("/recommend/")
+@app.post("/generate/")
 def generate(req: ExampleRequestGen):
     try:
         # Load recommender once

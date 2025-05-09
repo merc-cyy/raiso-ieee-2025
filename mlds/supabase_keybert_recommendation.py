@@ -31,11 +31,7 @@ class VolunteerRecommender:
     )
 
     def fit(self):
-<<<<<<< HEAD
         # print("MODEL IS CALLED")
-=======
-        print("MODEL IS CALLED")
->>>>>>> 6894dbe805c1e1775b2e4ecc9037755070b7ac27
         # embed
         self.embeddings = self.embedding_model.encode(
             self.df['combined_text'].tolist(), convert_to_numpy=True

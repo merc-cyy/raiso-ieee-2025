@@ -99,7 +99,7 @@ function Posts() {
   const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
   //const backendApiUrl = 'http://localhost:5001'; LOCAL URLS FOR LOCAL DEPLOY
   //const fastApiUrl = 'http://127.0.0.1:8000';
-  const fastApiUrl = 'https://ieee-fastapi2.onrender.com';
+  //const fastApiUrl = 'https://ieee-fastapi2.onrender.com';
 
   const backupJobs = async () => {
     console.log("GETTING BACKUP JOBS SINCE ONE OF THE MODELS FAILED");

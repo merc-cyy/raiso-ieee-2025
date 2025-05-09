@@ -9,7 +9,7 @@ function Onboarding(){
 
     //state variables
     const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
-    // const backendApiUrl = 'http://localhost:5001';
+    
 
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [registrationError, setRegistrationError] = useState('');
