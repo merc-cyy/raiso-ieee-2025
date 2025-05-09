@@ -235,3 +235,28 @@ label {
     transform: translateY(-6px);
   }
 }
+
+a[href^="http"], a[href^="mailto:"] {
+  position: relative;
+  color: #7114d5;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a[href^="http"]::after, a[href^="mailto:"]::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background-color: #5f00b6;
+  transform: scaleX(0);
+  transform-origin: right; /* Start from right */
+  transition: transform 0.3s ease;
+}
+
+a[href^="http"]:hover::after, a[href^="mailto:"]:hover::after {
+  transform: scaleX(1);
+  transform-origin: left; /* Animate toward the left */
+}
