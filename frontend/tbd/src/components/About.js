@@ -45,6 +45,14 @@ function About() {
           <p>
           Thank you to the 2024-2025 IEEE Executive Board, the <a href="https://itachicago.org/" className="text-decoration-none">Institute for Therapy Through the Arts</a>, and <a href="https://mealsonwheelsnei.org/" className="text-decoration-none">Meals on Wheels Northeastern Illinois</a> for their support!
           </p>
+          <h4 className="mt-4">Credits</h4>
+          <p>
+          Project Manager: <a href="https://linkedin.com/in/ayush-s-arora/" className="text-decoration-none">Ayush Shukla Arora</a><br></br>
+          Backend Engineer: <a href="" className="text-decoration-none">Emran Majidy</a><br></br>
+          Data Scientist: <a href="" className="text-decoration-none">Naomi Li</a><br></br>
+          Frontend Developer: <a href="" className="text-decoration-none">Mercy Muiruri</a><br></br>
+          Machine Learning Engineers: <a href="" className="text-decoration-none">Breanna Lu, Casey Zhang</a>
+          </p>
         </div>
       </div>
 
