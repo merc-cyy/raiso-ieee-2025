@@ -4,7 +4,8 @@ import supabase from '../supabaseClient.js';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  const { data, error } = await supabase.from('jobs').select('*');
+  const limit = parseInt(req.query.limit, 10) || 250;
+  const { data, error } = await supabase.from('jobs').select('*').limit(limit);
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
 });

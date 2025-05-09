@@ -38,7 +38,7 @@ const router = express.Router();
 
 /////////////////////////////
 router.post('/signup', async (req, res) => {
-  console.log('Received POST request at /auth/register-test'); 
+  console.log('Received POST request at /auth/signup'); 
   const {
         email,
         password,
@@ -50,6 +50,17 @@ router.post('/signup', async (req, res) => {
         description
     } = req.body;//from the frontend
 
+  console.log({
+    email,
+        password,
+        firstName,
+        lastName,
+        city,
+        state,
+        zipcode,
+        description
+  })
+
   if (!email || !password){
     console.log("error: ", authError.message)
     return res.status(400).json({error: "Email and password are needed"})
@@ -57,11 +68,14 @@ router.post('/signup', async (req, res) => {
 
   try
   {
+    
     //add user to the auth table
     const {data: authData, error: authError} = await supabase.auth.signUp({
       email: email,
       password: password
     })
+  
+    console.log("logging stuff below")
 
     if (authError)//in case of authentication error
     {
@@ -69,19 +83,22 @@ router.post('/signup', async (req, res) => {
       {
         return res.status(400).json({error: "You have already signed up. Try resetting your password."});
       }
-      else
-      {
-        console.log("EEROOOR: ", authError.message)
+      
+      
+        console.log("ERROR IN ADDING USER TO AUTH TABLE: ", authError.message)
         return res.status(400).json({error: authError.message})
-      }
+      
+    }
+
+    if (!authError){
+      console.log("USER ADDED TO AUTH TABLE")
     }
 
     const userId = authData.user.id
-    
-
-    //insert into users table
+    console.log(userId)
+    //insert into users table'
     const {data: userData, error: userError} = await supabase
-            .from('public.users')
+            .from('users')
             .insert([
               {
                 userauth_id: userId, // Use the ID from Supabase Auth
@@ -95,21 +112,26 @@ router.post('/signup', async (req, res) => {
               }
             ])
             .select();//select new row 
+      
 
     if (userError) {
             // If there's an error inserting into the 'users' table,
-            console.log({userError})
+            console.log('User table insert error:', userError);
             return res.status(500).json({ error: userError.message });
         }///POTENTIAL BUG: ROLLING BACK?
 
     res.status(201).json({
-      error: userData[0]
+      user: userData[0]
     })
+
+    if (!userError){
+      console.log("User added to users table")
+    }
     
 
   }
 
-  catch
+  catch(error)
   {
     console.error('Error during signup:', error);
     res.status(500).json({ error: 'Internal server error during signup' });
@@ -136,11 +158,12 @@ router.post('/login', async (req, res) => {
         });
 
       if (error) {
+            console.log("Error logging in")
             return res.status(401).json({ error: error.message }); //  401 for invalid credentials
         }
 
       //  Successful login, get the user profile info.
-
+      console.log("SUCCESSFUL LOGIN")
       res.json({ 
           user: data.user,  //  Include the user object
           token: data.session.access_token, //  Send the access token
@@ -148,7 +171,7 @@ router.post('/login', async (req, res) => {
 
     }
 
-    catch
+    catch(error)
     {
       console.error('Error during login:', error);
       res.status(500).json({ error: 'Internal server error' });

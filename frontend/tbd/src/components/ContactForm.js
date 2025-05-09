@@ -98,7 +98,7 @@ function ContactForm() {
             ></textarea>
           </div>
 
-          <button type="submit" className="btn btn-primary custom-btn-post-color">Submit</button>
+          <button type="submit" className="custom-btn-post-color">Submit</button>
         </form>
       </div>
       </div>

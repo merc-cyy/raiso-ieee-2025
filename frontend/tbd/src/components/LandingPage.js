@@ -27,10 +27,10 @@ function LandingPage() {
 
   const slideTexts = [
     "Would you like to volunteer at an animal shelter?",
-    "Are you a pre-med student looking for spaces to volunteer?",
-    "Or a tech student looking to build experience with actual users?",
-    "Would you love to help small kids learn to read?",
-    "Or you just want to give back to society by doing something for the environment?"
+    "Are you a pre-med student looking for volunteer work?",
+    "Are you studying tech and want real-world experience with users?",
+    "Would you love to help kids learn to read?",
+    "Do you want to give back to mother nature?"
   ];
 
   useEffect(() => {
@@ -72,25 +72,27 @@ function LandingPage() {
           >
             {slideTexts[currentImageIndex]}
           </h1>
-          <button className="btn custom-btn-post-color mt-4" onClick={handleLogInClick}>
-            See Our Open Postings!
+          <button className="custom-btn-post-color mt-4 bouncy-button" onClick={handleLogInClick}>
+            Find Your Next Opportunity!
           </button>
         </div>
       </div>
 
       <div className="container text-center">
         <section className="landing-page-blurbs" style={{ backgroundColor: '#E0D4FF', borderRadius: '1rem', margin: '2rem auto', padding: '2rem' }}>
-          <h3><strong>Sponsored by Northwestern students</strong></h3>
+          <h3><strong>
+          For <span style={{ textDecoration: 'line-through' }}>students</span> everyone, by students.
+          </strong></h3>
           <p>
-            NUVolunteers connects college students to local volunteer opportunities near campus.
+            NUVolunteers, while designed for college students, can connect anyone to local volunteer opportunities in the Chicago Metropolitan Area.
           </p>
           <img className='custom-landing-image' src={northwestern_image} alt='Northwestern University' />
         </section>
 
         <section className="landing-page-blurbs" style={{ backgroundColor: '#D9C7FF', borderRadius: '1rem', margin: '2rem auto', padding: '2rem' }}>
-          <h3><strong>Students</strong></h3>
+          <h3><strong>Your Results, Powered by AI</strong></h3>
           <p>
-            Get a personalized list of opportunities based on your interests!
+            Discover opportunities personalized to your interests—powered by machine learning.
           </p>
           <img className='custom-landing-image' src={food_drive} alt='Student volunteering' />
         </section>
