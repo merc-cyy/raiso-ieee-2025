@@ -143,10 +143,15 @@ function Posts() {
       setLoading(true);
       setError(null);
 
+      
+
       const fetchAllJobs = async () => {
       console.log("SENDING GENERATE")
       try
       {
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Request timed out")), 5000) // 5 seconds
+        );
         const res = await fetch(`${fastApiUrl}/recommend/`,
         {
           method: 'POST',
@@ -182,7 +187,7 @@ function Posts() {
           console.log(error.message)
           //setError(error.message);//set error to be that message
           setAllJobs([]);
-          backupJobs();//call backupJobs
+          await backupJobs();//call backupJobs
 
         }
         finally{
