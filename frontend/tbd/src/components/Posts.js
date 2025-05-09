@@ -150,7 +150,7 @@ function Posts() {
       try
       {
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Request timed out")), 50000) // 5 seconds
+          setTimeout(() => reject(new Error("Request timed out")), 5000) // 5 seconds
         );
         const res = await fetch(`${fastApiUrl}/recommend/`,
         {
