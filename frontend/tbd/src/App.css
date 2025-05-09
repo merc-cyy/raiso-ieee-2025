@@ -185,3 +185,62 @@
 .text-outline-black {
   text-shadow: 0px 4px 12px rgba(0, 0, 0, 0.6);
 }
+
+.custom-form-box {
+  background-color: white;
+  max-width: 700px;
+  width: 100%;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.custom-form-section {
+  background-color: #f9f7ff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.custom-form-section h5 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+
+input.form-control,
+textarea.form-control,
+select.form-select {
+  font-size: 0.95rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+label {
+  margin-top: 1rem;
+}
+
+.bouncy-button {
+  animation: bounceBtn 2.5s infinite;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+.bouncy-button:hover {
+  transform: scale(1.1);
+  background-color: #5f00b6 !important;  /* Replace with your hover color */
+  color: white !important;               /* Replace if needed */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes bounceBtn {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
