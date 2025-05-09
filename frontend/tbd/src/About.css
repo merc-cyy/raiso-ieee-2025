@@ -1,0 +1,55 @@
+.about-hero {
+  background-color: #F4EDFF;
+  padding: 2rem;
+  min-height: 100svh;
+}
+
+.fade-in-intro {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1.2s ease forwards;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated-arrow {
+  animation: arrowFade 2s infinite;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(0);
+  width: 36px; /* 20% more than ~30px */
+  height: 36px;
+}
+
+@keyframes arrowFade {
+  0% { opacity: 0; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(8px); }
+  100% { opacity: 0; transform: translateY(16px); }
+}
+
+@keyframes scroll {
+  0% {
+    top: 8px;
+    opacity: 1;
+  }
+  100% {
+    top: 28px;
+    opacity: 0;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
