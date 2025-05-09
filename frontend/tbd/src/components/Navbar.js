@@ -9,7 +9,7 @@ function Navbar() {
     <nav className='navbar navbar-expand-lg custom-navbar-bg-color py-2'>
       <div className='container-fluid'>
         <Link className="navbar-brand" to="/">
-          <img src="/ieeefavicon.png" alt="NUVolunteers Logo" style={{ height: '32px', marginRight: '10px' }} />
+          <img src="/logo512.png" alt="NUVolunteers Logo" style={{ height: '32px', marginRight: '10px' }} />
           NUVolunteers
         </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
