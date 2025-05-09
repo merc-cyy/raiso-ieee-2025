@@ -149,36 +149,37 @@ function Posts() {
       console.log("SENDING GENERATE")
       try
       {
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Request timed out")), 5000) // 5 seconds
-        );
-        const res = await fetch(`${fastApiUrl}/recommend/`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type' : 'application/json'},
-          body : JSON.stringify({userid : userId})
-        }
-        );
-        if (!res.ok){
-              throw new Error(`HTTP error! status: ${res.status}`);
-            }
-        console.log("SENT GENERATE")
+        // const timeoutPromise = new Promise((_, reject) =>
+        //   setTimeout(() => reject(new Error("Request timed out")), 5000) // 5 seconds
+        // );
+        // const res = await fetch(`${fastApiUrl}/recommend/`,
+        // {
+        //   method: 'POST',
+        //   headers: { 'Content-Type' : 'application/json'},
+        //   body : JSON.stringify({userid : userId})
+        // }
+        // );
+        // if (!res.ok){
+        //       throw new Error(`HTTP error! status: ${res.status}`);
+        //     }
+        // console.log("SENT GENERATE")
       
-        const data = await res.json();
-        console.log("DATA")
-        console.log(data)
-        const jobs = data.jobs
-        console.log(jobs)
-        const prioritizedJobs = jobs.sort((a, b) => {
-        const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
-        const isA = a.organization === sponsor;
-        const isB = b.organization === sponsor;
+        // const data = await res.json();
+        // console.log("DATA")
+        // console.log(data)
+        // const jobs = data.jobs
+        // console.log(jobs)
+        // const prioritizedJobs = jobs.sort((a, b) => {
+        // const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
+        // const isA = a.organization === sponsor;
+        // const isB = b.organization === sponsor;
 
-        if (isA && !isB) return -1;
-        if (!isA && isB) return 1;
-        return 0;}); // keep existing order if both are same type
+        // if (isA && !isB) return -1;
+        // if (!isA && isB) return 1;
+        // return 0;}); // keep existing order if both are same type
 
-        setAllJobs(prioritizedJobs);
+        // setAllJobs(prioritizedJobs);
+        await backupJobs();
 
         }
         catch (error)
@@ -187,7 +188,7 @@ function Posts() {
           console.log(error.message)
           //setError(error.message);//set error to be that message
           setAllJobs([]);
-          await backupJobs();//call backupJobs
+          //await backupJobs();//call backupJobs
 
         }
         finally{
