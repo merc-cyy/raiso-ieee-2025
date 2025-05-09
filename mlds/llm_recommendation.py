@@ -22,21 +22,25 @@ class llmRecommender:
         self.vectorstore = None
         self.retriever = None
         self.qa_chain = None
-        self.load_data()
-        self.df = None
+        self.jobs_table = 'jobs'
 
     def fetch_data(self):
-        # Fetch opportunities from the Supabase database
-        response = self.supabase.table('jobs').select(
+        # fetch opportunities
+        response = self.supabase.table(self.jobs_table).select(
             'id, title, organization, description, date, location, skills, requirement'
         ).execute()
-        # Load data into a DataFrame
         self.df = pd.DataFrame(response.data)
-        self.df["summarized"] = ("title: " + self.df.title.str.strip() + "; description: " + 
-                                 self.df.description.str.strip() + "; date: " + 
-                                 self.df.date.str.strip() + "; skills: " + 
-                                 self.df.skills.str.strip() + "; requirements: " + 
-                                 self.df.requirement.str.strip())
+        self.preprocess()
+
+    def preprocess(self):
+        self.df['summarized'] = (
+            self.df['title'].fillna('') + ' ' +
+            self.df['organization'].fillna('') + ' ' +
+            self.df['description'].fillna('') + ' ' +
+            self.df['location'].fillna('') + ' ' +
+            self.df['skills'].fillna('') + ' ' +
+            self.df['requirement'].fillna('')
+    )
 
     def load_data(self):
         # Convert DataFrame to CSV format

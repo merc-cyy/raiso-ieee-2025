@@ -15,4 +15,22 @@ query = "I am free on weekends and want to volunteer with kids."
 recommendations = recommender.paragraph_process(query, top_n=5)
 print(recommendations)
 
+<<<<<<< HEAD
+
+
 '''
+
+
+'''
+recommender = llmRecommender(supabase)
+recommender.fetch_data()
+recommender.load_data()
+recommender.build_qa_chain()
+recommendations = recommender.recommend(blurb)
+print(recommendations)
+
+pip freeze > requirements.txt
+'''
+=======
+'''
+>>>>>>> 6894dbe805c1e1775b2e4ecc9037755070b7ac27
