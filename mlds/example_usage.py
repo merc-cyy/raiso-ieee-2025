@@ -15,6 +15,7 @@ query = "I am free on weekends and want to volunteer with kids."
 recommendations = recommender.paragraph_process(query, top_n=5)
 print(recommendations)
 
+<<<<<<< HEAD
 
 
 '''
@@ -30,3 +31,6 @@ print(recommendations)
 
 pip freeze > requirements.txt
 '''
+=======
+'''
+>>>>>>> 6894dbe805c1e1775b2e4ecc9037755070b7ac27

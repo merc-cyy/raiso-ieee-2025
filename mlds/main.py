@@ -6,8 +6,11 @@ from dotenv import load_dotenv
 import os
 from supabase import create_client, Client
 
+<<<<<<< HEAD
 from llm_recommendation import llmRecommender
 
+=======
+>>>>>>> 6894dbe805c1e1775b2e4ecc9037755070b7ac27
 app = FastAPI()
 load_dotenv()
 
@@ -41,14 +44,7 @@ jobs = {}
 # Define request schema
 class ExampleRequest(BaseModel):
     userid: str
-
-# Define request schema
-class ExampleRequestGenerate(BaseModel):
-    blurb: str
-    
 recommender = VolunteerRecommender(supabase)
-recommender.fetch_data()
-recommender.fit()
 @app.post("/recommend/")
 def recommend(request: ExampleRequest):
     try:
@@ -58,6 +54,11 @@ def recommend(request: ExampleRequest):
         user_id = request.userid
         print(f"USERID:{user_id}")
         
+        print("INIT IS DONE")
+        recommender.fetch_data()
+        print("Before MODEL FIT")
+        recommender.fit()
+        print("MODEL FIT IS DONE")
         user_embedding = recommender.build_user_profile(user_id)
         print("USER RECOMMENDATIONS TAKEN INTO CONSIDERATION")
         recommendations = recommender.recommend_for_user(user_embedding, top_n=1000)
@@ -66,39 +67,6 @@ def recommend(request: ExampleRequest):
         # print(f"Recommendations written to: {output_path}")
         # Convert DataFrame to list of dictionaries
         recommendations_list = recommendations.to_dict(orient="records")
-
-        # print(f"RECOMMENDATIONS:{recommendations_list}")
-        return {
-            'jobs' : recommendations_list
-        }
-    except Exception as e:
-        import traceback
-        print("bad ERROR OCCURRED:")
-        traceback.print_exc() 
-        return {"error": str(e)}
-    
-
-
-
-@app.post("/generate/")
-def generate(request: ExampleRequestGenerate):
-    try:
-        # Load recommender once
-        generator = llmRecommender(supabase)
-        print("Data loaded!")
-        generator.fetch_data()
-        print("Data fetched!")
-        generator.load_data()
-        print("Data loaded!")
-        generator.build_qa_chain()
-        blurb = request.blurb
-        print(f"blurb:{blurb}")
-        print("blurb RECOMMENDATIONS TAKEN INTO CONSIDERATION")
-        gen_recommendations = generator.recommend(blurb)
-        output_path = f"recommendations_.csv"
-        gen_recommendations.to_csv(output_path, index=False)
-        print(f"Recommendations written to: {output_path}")
-        recommendations_list = gen_recommendations.to_dict(orient="records")
 
         # print(f"RECOMMENDATIONS:{recommendations_list}")
         return {

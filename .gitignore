@@ -32,9 +32,9 @@ yarn-error.log*
 frontend/tbd/node_modules/
 ieee/
 
-__pycache__
 
-mlds/src/
-.env
+mlds/src
+
+__pycache__
 
 mlds/.env
