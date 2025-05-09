@@ -38,7 +38,7 @@ const router = express.Router();
 
 /////////////////////////////
 router.post('/signup', async (req, res) => {
-  console.log('Received POST request at /auth/register-test'); 
+  console.log('Received POST request at /auth/signup'); 
   const {
         email,
         password,
@@ -57,6 +57,7 @@ router.post('/signup', async (req, res) => {
 
   try
   {
+    console.log("USER ADDED TO AUTH TABLE")
     //add user to the auth table
     const {data: authData, error: authError} = await supabase.auth.signUp({
       email: email,
@@ -77,6 +78,7 @@ router.post('/signup', async (req, res) => {
     }
 
     const userId = authData.user.id
+
     
 
     //insert into users table
@@ -95,6 +97,7 @@ router.post('/signup', async (req, res) => {
               }
             ])
             .select();//select new row 
+      console.log("User added to users table")
 
     if (userError) {
             // If there's an error inserting into the 'users' table,
