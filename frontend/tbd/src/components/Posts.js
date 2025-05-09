@@ -30,6 +30,7 @@ function Posts() {
   }
   //function to like a post
   const handleLike = async (jobId) => {
+    console.log("logging the initial likedjobs here", likedJobs);
 
     console.log(`About to like job with ID: ${jobId}`);
     if (likedJobs.includes(jobId)) {
@@ -52,6 +53,7 @@ function Posts() {
       {
         const data = await res.json();
         setLikedJobs(prevLikedJobs => [...prevLikedJobs, jobId]);//add to the list of liked
+        console.log("Job id is now LIKED!")
 
       }
       else
@@ -94,10 +96,46 @@ function Posts() {
 
  
 
-  //const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
-  const backendApiUrl = 'http://localhost:5001';
-  const fastApiUrl = 'http://127.0.0.1:8000';
+  const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+  //const backendApiUrl = 'http://localhost:5001'; LOCAL URLS FOR LOCAL DEPLOY
+  //const fastApiUrl = 'http://127.0.0.1:8000';
+  const fastApiUrl = 'https://ieee-fastapi2.onrender.com';
 
+  const backupJobs = async () => {
+    console.log("GETTING BACKUP JOBS SINCE ONE OF THE MODELS FAILED");
+    setLoading(true);
+    setError(null);
+
+    try
+      {
+        const res = await fetch (`${backendApiUrl}/posts/?limit=250`)
+
+        if (!res.ok){
+             throw new Error(`HTTP error! status: ${res.status}`);
+        }
+           
+        const data = await res.json();
+        const prioritizedJobs = data.sort((a, b) => {
+          const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
+          const isA = a.organization === sponsor;
+          const isB = b.organization === sponsor;
+
+          if (isA && !isB) return -1;
+          if (!isA && isB) return 1;
+          return 0; // keep existing order if both are same type
+        }); 
+
+        setAllJobs(prioritizedJobs);
+      }
+      catch(error)
+      {
+        setError(error.message);//set error to be that message
+        setAllJobs([]);
+      }
+      finally{
+        setLoading(false);
+      }
+}
   
 
   useEffect(()  => {
@@ -106,42 +144,10 @@ function Posts() {
       setError(null);
 
       const fetchAllJobs = async () => {
-          // try
-          // {
-          //   const res = await fetch (`${backendApiUrl}/posts/`)
-
-          //   if (!res.ok){
-          //     throw new Error(`HTTP error! status: ${res.status}`);
-          //   }
-          //   const data = await res.json();
-
-            // const prioritizedJobs = data.sort((a, b) => {
-            // const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
-            // const isA = a.organization === sponsor;
-            // const isB = b.organization === sponsor;
-
-            // if (isA && !isB) return -1;
-            // if (!isA && isB) return 1;
-            // return 0; // keep existing order if both are same type
-          //}); 
-
-          // setAllJobs(prioritizedJobs);
-          //   // setAllJobs(data); 
-          // }
-          // catch(error)
-          // {
-          //   setError(error.message);//set error to be that message
-          //   setAllJobs([]);
-          // }
-          // finally{
-          //   setLoading(false);
-          // }
-
-          console.log("SENDING GENERATE")
-
-          try
-        {
-          const res = await fetch(`${fastApiUrl}/recommend/`,
+      console.log("SENDING GENERATE")
+      try
+      {
+        const res = await fetch(`${fastApiUrl}/recommend/`,
         {
           method: 'POST',
           headers: { 'Content-Type' : 'application/json'},
@@ -173,17 +179,16 @@ function Posts() {
         catch (error)
         {
           console.log("Couldn't generate recommended jobs.")
-          setError(error.message);//set error to be that message
+          console.log(error.message)
+          //setError(error.message);//set error to be that message
           setAllJobs([]);
+          backupJobs();//call backupJobs
 
         }
         finally{
             setLoading(false);
           }
-
-
         };
-
         fetchAllJobs();
       },
       [userId]);
