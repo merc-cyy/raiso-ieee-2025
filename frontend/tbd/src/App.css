@@ -29,7 +29,7 @@
 
 /* Buttons */
 .custom-btn-post-color {
-  background-color: #BBD0FF;
+  background-color: #D9C7FF;
   color: black;
   padding: 0.75rem 2rem;
   font-size: 1.1rem;
@@ -45,15 +45,7 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
-.liked{
-  color: green;
-}
-.highlight-meals{
-  border: 2px solid green !important;
-}
-.custom-card{
-  border: 1px solid purple;
-}
+
 /* Navbar */
 .navbar-brand {
   font-weight: 700;
@@ -82,7 +74,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   z-index: 1000;
   position: relative;
-  border: 1px solid purple;
 }
 
 /* Blurbs and images */

@@ -72,7 +72,7 @@ function LandingPage() {
           >
             {slideTexts[currentImageIndex]}
           </h1>
-          <button className="btn custom-btn-post-color mt-4 custom-btn-post-color bouncy-button" onClick={handleLogInClick}>
+          <button className="custom-btn-post-color mt-4 bouncy-button" onClick={handleLogInClick}>
             Find Your Next Opportunity!
           </button>
         </div>
