@@ -71,7 +71,7 @@ class llmRecommender:
         text = response['result']
 
         # parse the result to extract the recommended opportunities
-        recommended_opportunities = []
+        recommended_opportunities = pd.DataFrame()
         for line in text.split('\n'):
             # Check if the line starts with a number followed by a period and space
             if line.strip() and line[0].isdigit() and '. ' in line:
@@ -80,9 +80,9 @@ class llmRecommender:
                 
                 try:
                     # Find the corresponding row in the DataFrame
-                    row = self.df[self.df['Title'].str.contains(title, na=False)]
+                    row = self.df[self.df['Title']==title]
                     if not row.empty:
-                        recommended_opportunities.append(row)
+                        recommended_opportunities = pd.concat([recommended_opportunities, row])
                 except Exception as e:
                     print(f"Error finding row for title '{title}': {e}")
                     continue
