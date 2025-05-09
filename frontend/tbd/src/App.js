@@ -10,6 +10,7 @@ import ProtectedRoute from './components/protectedRoute';
 import LoginPage from './components/LoginPage';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsAndConditions from './components/Terms';
+import About from './components/About';
 // import Footer from './components/Footer';
 
 
@@ -25,6 +26,7 @@ function App() {
         <Route path='/login' element={<LoginPage/>} />
         <Route path='/privacy' element={<PrivacyPolicy/>} />
         <Route path='/terms' element={<TermsAndConditions/>} />
+        <Route path='/about' element={<About/>} />
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element ={<Home/>} />
           <Route path="/studentdashboard" element={<StudentDashboard/>}/>
