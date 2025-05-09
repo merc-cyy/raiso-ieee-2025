@@ -19,21 +19,21 @@ function PostsNavBar(){
                     </a>
 
                     {/*Hamburger Menu*/}
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
+                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
                     </button>
 
-                    <div class="collapse navbar-collapse me-4 " id="navbarNav">
-                        <ul class="navbar-nav me-auto">
-                            <li class="nav-item">
-                                <a class="nav-link active custom-dashboard" aria-current="page" onClick={handleStudentProfile}>My Dashboard</a>
+                    <div className="collapse navbar-collapse me-4 " id="navbarNav">
+                        <ul className="navbar-nav me-auto">
+                            <li className="nav-item">
+                                <a className="nav-link active custom-dashboard" aria-current="page" onClick={handleStudentProfile}>My Dashboard</a>
                             </li>
                         </ul>
 
                         <ul className="navbar-nav ms-auto\">
                             <li className="nav-item\">
                                 <a className="nav-link active custom-dashboard" href="/">
-                                   {/* <i class="bi bi-person-fill fs-1 custom-icon-color"></i> */}
+                                   {/* <i className="bi bi-person-fill fs-1 custom-icon-color"></i> */}
                                    Logout
                                 </a>
                             </li>
