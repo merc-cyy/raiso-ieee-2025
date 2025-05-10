@@ -141,20 +141,37 @@ function Posts() {
     }
   }, [storedUserAuthData]);
 
+  // useEffect(() => {
+  //   const fetchAllJobs = async () => {
+  //     try {
+  //       await backupJobs();
+  //     } catch (error) {
+  //       setAllJobs([]);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   if (userId && !newinterest && recommendedJobs.length === 0) {
+  //     fetchAllJobs();
+  //   }
+  // }, [userId]);
+
+  const fetchAllJobs = async () => {
+    try {
+      await backupJobs();
+    } catch (error) {
+      setAllJobs([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   useEffect(() => {
-    const fetchAllJobs = async () => {
-      try {
-        await backupJobs();
-      } catch (error) {
-        setAllJobs([]);
-      } finally {
-        setLoading(false);
-      }
-    };
     if (userId && !newinterest && recommendedJobs.length === 0) {
       fetchAllJobs();
     }
-  }, [userId]);
+  }, [userId]); // Ensure that the effect listens to changes in relevant variables
+  
 
   const filteredJobs = useMemo(() => {
     return allJobs
@@ -199,10 +216,12 @@ function Posts() {
       setRecommendedJobs(prioritizedJobs);
       setError(null);
     } catch (error) {
+
       console.log("NO RECOMMENDED JOBS")
+      await fetchAllJobs();
       setError(error.message);
       setRecommendedJobs([]);
-      await fetchAllJobs();
+      
     }
   };
   
