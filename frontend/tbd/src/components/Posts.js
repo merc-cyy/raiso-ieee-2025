@@ -200,6 +200,8 @@ function Posts() {
         },
         body: JSON.stringify({ blurb: newinterest }),
       });
+
+      
   
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
   
