@@ -198,7 +198,7 @@ function Posts() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ input: newinterest }),
+        body: JSON.stringify({ blurb: newinterest }),
       });
   
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
