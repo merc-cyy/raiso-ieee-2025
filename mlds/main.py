@@ -1,188 +1,117 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-# import try
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.chrome.service import Service
-import pandas as pd
-import random
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from dotenv import load_dotenv
+from supabase import create_client, Client
+import os
 
-import time
+# Your recommender imports
+from supabase_keybert_recommendation import VolunteerRecommender as KeyBERTRecommender
+from supabase_tfidf_recommendation import VolunteerRecommender as TFIDFRecommender
+from llm_recommendation import llmRecommender
 
-options = webdriver.ChromeOptions()
+load_dotenv()
 
-options.add_experimental_option('detach', True)
+app = FastAPI()
 
-driver = webdriver.Chrome(options=options)
+# ------------------ CORS ------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with frontend domain in prod
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-driver.get('https://www.volunteermatch.org/search/?l=Evanston%2C+IL%2C+USA&v=true&o=distance')
-print(driver.title)
+# ------------------ Supabase Setup ------------------
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-all_opporunities = []
+# ------------------ Models ------------------
+class RecommendRequest(BaseModel):
+    userid: str
 
-# Pagination handling
-page_num = 1
-has_next_page = True
+class BlurbRequest(BaseModel):
+    blurb: str
 
-while has_next_page:
-    print(f"Processing page {page_num}")
-    
-    # Process all opportunities on the current page
-    # (code from above)
+# ------------------ Instantiate Models ------------------
+keybert_model = KeyBERTRecommender(supabase)
+tfidf_model = TFIDFRecommender(supabase)
+llm_model = llmRecommender(supabase)
 
+# ------------------ Routes ------------------
+@app.get("/posts/")
+def get_all_jobs(limit: int = 250):
     try:
-        # Wait for search results to load
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "li[class*='pub-srp-opps__opp']"))
-        )
-        
-        # Get all search results
-        search_results = driver.find_elements(By.CSS_SELECTOR, "li[class*='pub-srp-opps__opp']")
-        
-        print(f"Found {len(search_results)} search results")
-
-        # get each result
-        for index, result in enumerate(search_results):
-            print(f"Processing result {index + 1}/{len(search_results)}")
-            WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "li[class*='pub-srp-opps__opp']"))
-            )
-            # Get the link URL before clicking (in case we need it)
-            try:
-                link_element = result.find_element(By.CSS_SELECTOR, "h3 a")
-                link_url = link_element.get_attribute("href")
-            except Exception as e:
-                print(f"Error getting link URL: {e}")
-                link_url = None
-
-            # Click the link
-            try:
-                driver.execute_script("window.open(arguments[0]);", link_url)
-                driver.switch_to.window(driver.window_handles[-1])  # Switch to the new tab
-
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.TAG_NAME,"body"))
-                )
-
-                opportunity_data = {
-                    "Title": "",
-                    "Organization": "",
-                    "Description": "",
-                    "Date": "",
-                    "Location": "",
-                    "Skills": "",
-                    "Requirement": "",
-                    "URL": driver.current_url
-                }
-
-                try:
-                    opportunity_data["Title"] = driver.find_element(By.CSS_SELECTOR, "h1").text
-                except:
-                    print("Error getting title")
-                    break
-
-                try:
-                    org_name = driver.find_element(By.CSS_SELECTOR, 'h2.opp-dtl__org-name.text-sm a').text
-                    opportunity_data["Organization"] = driver.find_element(By.CSS_SELECTOR, 'h2.opp-dtl__org-name.text-sm a').text
-                    print(f"Organization: {org_name}")
-                except:
-                    print("Error getting organization name")
-                    break
-
-                try:
-                    desc_div = driver.find_element(By.ID, "short_desc")
-                    paragraphs = desc_div.find_elements(By.TAG_NAME, "p")
-                    description = " ".join([p.text for p in paragraphs])
-                    opportunity_data["Description"] = description
-                except:
-                    print("Error getting description")
-                    break
-                
-                try:
-                    date = driver.find_element(By.CSS_SELECTOR, 'section.logistics__section--when div.para').text
-                    opportunity_data["Date"] = date
-                except:
-                    print("Error getting date")
-                    break
-
-                try:
-                    skill_elements = driver.find_elements(By.CSS_SELECTOR, "section.logistics__section--skills li.item")
-                    skills = [skill.text for skill in skill_elements]
-                    opportunity_data["Skills"] = ", ".join(skills)
-
-                except:
-                    print("Error getting skills")
-                    break
-
-                try:
-                    requirement_element = driver.find_element(By.CSS_SELECTOR, "section.logistics__section--requirements li.item")
-                    requirement = requirement_element.text
-                    opportunity_data["Requirement"] = requirement
-                except:
-                    opportunity_data["Requirement"] = "no requirement"
-                    
-
-                try:
-                    location_element = driver.find_element(By.CSS_SELECTOR, "h4.l-location + p.left")
-                    location = location_element.text
-                    opportunity_data["Location"] = location
-                except Exception as e:
-                    print(f"Error getting location: {e}")
-                    opportunity_data["Location"] = ""
-
-                
-
-                driver.close()
-                driver.switch_to.window(driver.window_handles[0])
-                all_opporunities.append(opportunity_data)
-
-            except Exception as e:
-                print(f"Error processing result {index + 1}: {e}")
-                # If there was an error, make sure we're back on the main tab
-
+        response = supabase.table("jobs").select("*").limit(limit).execute()
+        return response.data
     except Exception as e:
-        print(f"An error occurred: {e}")
-  
+        return {"error": str(e)}
 
-        
-    # Check if there's a next page button
+@app.post("/interests/")
+def save_interest(payload: dict):
     try:
-
-        wait = WebDriverWait(driver, 10)
-        next_button = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "span.pub-srp-pag__arrw--next"))
-        )       
-        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", next_button)
-        WebDriverWait(driver, 10).until(
-    EC.element_to_be_clickable((By.CSS_SELECTOR, "span.pub-srp-pag__arrw--next"))
-        )       
-        driver.execute_script("arguments[0].click();", next_button)
-        
-        if next_button.is_enabled():
-            page_num += 1
-            # Wait for the next page to load
-            time.sleep(60)
-            WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "li[class*='pub-srp-opps__opp']"))
-            )
-        else:
-            has_next_page = False
+        # Expected payload: { user_id, job_id, type: "like" or "apply" }
+        supabase.table("user_interests").insert(payload).execute()
+        return {"status": "success"}
     except Exception as e:
-        print(f"No more pages or error navigating: {e}")
-        has_next_page = False
+        return {"error": str(e)}
 
+@app.get("/interests/liked/ids/{user_id}")
+def get_liked_jobs(user_id: str):
+    try:
+        response = supabase.table("user_interests").select("job_id").eq("user_id", user_id).eq("type", "like").execute()
+        return [row["job_id"] for row in response.data]
+    except Exception as e:
+        return {"error": str(e)}
 
+@app.get("/interests/applied/ids/{user_id}")
+def get_applied_jobs(user_id: str):
+    try:
+        response = supabase.table("user_interests").select("job_id").eq("user_id", user_id).eq("type", "apply").execute()
+        return [row["job_id"] for row in response.data]
+    except Exception as e:
+        return {"error": str(e)}
 
-df = pd.DataFrame(all_opporunities)
-df.to_csv('volunteer_opportunities.csv', index=False)
+@app.post("/recommend/")
+def recommend(request: RecommendRequest):
+    try:
+        keybert_model.fetch_data()
+        keybert_model.fit()
+        user_embedding = keybert_model.build_user_profile(request.userid)
+        recs = keybert_model.recommend_for_user(user_embedding, top_n=1000)
+        return {"jobs": recs.to_dict(orient="records")}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"error": str(e)}
 
-            
+@app.post("/llm_recommend/")
+def llm_recommend(request: BlurbRequest):
+    try:
+        llm_model.fetch_data()
+        llm_model.load_data()
+        recs = llm_model.recommend(request.blurb)
+        return {"jobs": recs.to_dict(orient="records")}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"error": str(e)}
 
+@app.post("/tfidf_recommend/")
+def tfidf_recommend(request: RecommendRequest):
+    try:
+        tfidf_model.fetch_data()
+        tfidf_model.fit()
+        recs = tfidf_model.recommend_for_user(request.userid, top_n=1000)
+        return {"jobs": recs.to_dict(orient="records")}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"error": str(e)}
 
-
-
-
-time.sleep(5)
-driver.quit()
+# ------------------ Cloud Run Entry ------------------
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))\
