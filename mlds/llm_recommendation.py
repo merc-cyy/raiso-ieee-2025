@@ -4,7 +4,7 @@ import openai
 import tiktoken
 import tempfile
 import os
-
+import openai
 
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader
@@ -16,12 +16,13 @@ from langchain.document_loaders.csv_loader import CSVLoader
 from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 
+
 class llmRecommender:
     def __init__(self, supabase):
         self.supabase = supabase
         self.df = None
         self.embeddings = OpenAIEmbeddings()
-        self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0, openai_api_key=os.getenv("OPENAI_API_KEY"))
+        self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0)
         self.vectorstore = None
         self.retriever = None
         self.qa_chain = None
@@ -103,4 +104,3 @@ class llmRecommender:
 
         # final output: list of opportunities with every info on it
         return recommended_opportunities
-                        
