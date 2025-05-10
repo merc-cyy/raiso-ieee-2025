@@ -219,7 +219,6 @@ function Posts() {
 
       console.log("NO RECOMMENDED JOBS")
       await fetchAllJobs();
-      setError(error.message);
       setRecommendedJobs([]);
       
     }
