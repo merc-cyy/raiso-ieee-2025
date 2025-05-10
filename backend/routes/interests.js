@@ -71,7 +71,7 @@ router.get('/liked/:user_id', async (req, res) => {
 // GET route to get all applied jobs for a user
 router.get('/applied/:user_id', async (req, res) => {
   const { user_id } = req.params;
-
+  console.log("Fetching liked jobs for user:", user_id);  // Log for debugging
   const { data, error } = await supabase
     .from('user_interests')
     .select('jobs(*)')
