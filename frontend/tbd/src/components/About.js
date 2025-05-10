@@ -48,10 +48,10 @@ function About() {
           <h4 className="mt-4">Credits</h4>
           <p>
           Project Manager: <a href="https://linkedin.com/in/ayush-s-arora/" className="text-decoration-none">Ayush Shukla Arora</a><br></br>
-          Backend Engineer: <a href="" className="text-decoration-none">Emran Majidy</a><br></br>
-          Data Scientist: <a href="" className="text-decoration-none">Naomi Li</a><br></br>
-          Frontend Developer: <a href="" className="text-decoration-none">Mercy Muiruri</a><br></br>
-          Machine Learning Engineers: <a href="" className="text-decoration-none">Breanna Lu, Casey Zhang</a>
+          Backend Engineer: <a href="https://www.linkedin.com/in/emranm/" className="text-decoration-none">Emran Majidy</a><br></br>
+          Data Scientist: <a href="https://www.linkedin.com/in/naomi-li-/" className="text-decoration-none">Naomi Li</a><br></br>
+          Frontend Developer: <a href="https://www.linkedin.com/in/mercy-muiruri/" className="text-decoration-none">Mercy Muiruri</a><br></br>
+          Machine Learning Engineers: <a href="https://www.linkedin.com/in/breanna-lu/" className="text-decoration-none">Breanna Lu</a>, <a href="https://www.linkedin.com/in/bingyue-zhang-77992b297/" className="text-decoration-none">Casey Zhang</a>
           </p>
         </div>
       </div>
