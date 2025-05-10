@@ -119,9 +119,6 @@ function StudentProfile() {
             <Link to="/home" className="nav-link custom-dashboard text-decoration-none">Go to Postings</Link>
           </li>
           <li className="mb-2 ms-2">
-            <Link to="/studentprofile" className="nav-link custom-dashboard text-decoration-none">Profile</Link>
-          </li>
-          <li className="mb-2 ms-2">
             <span role="button" onClick={handleLogout} className="nav-link custom-dashboard text-decoration-none">Logout</span>
           </li>
         </ul>
