@@ -24,6 +24,7 @@ origins = [
 # CORS setup for React frontend
 app.add_middleware(
     CORSMiddleware,
+    
     allow_origins=['*'],  # or your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
@@ -45,6 +46,7 @@ jobs = {}
 class ExampleRequest(BaseModel):
     userid: str
 recommender = VolunteerRecommender(supabase)
+@app.post("/recommend")
 @app.post("/recommend/")
 def recommend(request: ExampleRequest):
     try:
@@ -85,6 +87,7 @@ def recommend(request: ExampleRequest):
 class ExampleRequestGen(BaseModel):
     blurb: str
 generator = llmRecommender(supabase)
+@app.post("/generate")
 @app.post("/generate/")
 def generate(req: ExampleRequestGen):
     try:
