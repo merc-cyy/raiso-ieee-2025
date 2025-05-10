@@ -12,8 +12,7 @@ function LoginPage() {
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
-    //const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
-    const backendApiUrl ='https://backend-ieee.onrender.com';
+    const backendApiUrl ='https://mldsnuvolunteers-957655660599.us-central1.run.app/';
 
     try {
       const response = await fetch(`${backendApiUrl}/auth/login`, {
