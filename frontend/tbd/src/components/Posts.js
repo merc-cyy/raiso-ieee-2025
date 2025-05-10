@@ -9,7 +9,7 @@ function Posts() {
   const [userId, setUserId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const backendApiUrl = 'https://backend-ieee.onrender.com';
-  const fastApiUrl = 'https://mldsnuvolunteers-957655660599.us-central1.run.app/';
+  const fastApiUrl = 'https://mldsnuvolunteers-957655660599.us-central1.run.app';
  
 
   const [likedJobs, setLikedJobs] = useState([]);
