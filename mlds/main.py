@@ -1,74 +1,75 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from supabase_keybert_recommendation import VolunteerRecommender 
 from dotenv import load_dotenv
 import os
 from supabase import create_client, Client
 
-app = FastAPI()
+from supabase_keybert_recommendation import VolunteerRecommender
+from llm_recommendation import llmRecommender
+
+# Load env variables
 load_dotenv()
 
+# FastAPI app
+app = FastAPI()
 
-# declare origin/s
-origins = [
-    "https://nuvolunteers.org/",
-    "localhost:3000"
-]
-
-
-# CORS setup for React frontend
+# CORS (allow frontend requests)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],  # or your frontend URL
+    allow_origins=["*"],  # Use specific domains for production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Supabase init
+# Supabase client
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-#jobs
-jobs = {}
-
-
-
-# Define request schema
-class ExampleRequest(BaseModel):
-    userid: str
+# Instantiate recommender objects ONCE
 recommender = VolunteerRecommender(supabase)
+generator = llmRecommender(supabase)
+
+# Preload embeddings and setup once
+print("Bootstrapping KeyBERT recommender...")
+recommender.fetch_data()
+recommender.fit()
+print("KeyBERT ready.")
+
+print("Bootstrapping LLM generator...")
+generator.fetch_data()
+generator.load_data()
+generator.build_qa_chain()
+print("LLM generator ready.")
+
+# Request models
+class UserRequest(BaseModel):
+    userid: str
+
+class BlurbRequest(BaseModel):
+    blurb: str
+
+# Volunteer recommendation route
 @app.post("/recommend/")
-def recommend(request: ExampleRequest):
+def recommend(req: UserRequest):
     try:
-        # Load recommender once
-
-        print("JUST STARTING")
-        user_id = request.userid
-        print(f"USERID:{user_id}")
-        
-        print("INIT IS DONE")
-        recommender.fetch_data()
-        print("Before MODEL FIT")
-        recommender.fit()
-        print("MODEL FIT IS DONE")
-        user_embedding = recommender.build_user_profile(user_id)
-        print("USER RECOMMENDATIONS TAKEN INTO CONSIDERATION")
+        user_embedding = recommender.build_user_profile(req.userid)
         recommendations = recommender.recommend_for_user(user_embedding, top_n=1000)
-        # output_path = f"/tmp/recommendations_{user_id}.csv"
-        # recommendations.to_csv(output_path, index=False)
-        # print(f"Recommendations written to: {output_path}")
-        # Convert DataFrame to list of dictionaries
-        recommendations_list = recommendations.to_dict(orient="records")
-
-        # print(f"RECOMMENDATIONS:{recommendations_list}")
-        return {
-            'jobs' : recommendations_list
-        }
+        return {"jobs": recommendations.to_dict(orient="records")}
     except Exception as e:
         import traceback
-        print("bad ERROR OCCURRED:")
-        traceback.print_exc() 
+        traceback.print_exc()
+        return {"error": str(e)}
+
+# LLM-based generation route
+@app.post("/generate/")
+def generate(req: BlurbRequest):
+    try:
+        gen_recommendations = generator.recommend(req.blurb)
+        return {"jobs": gen_recommendations.to_dict(orient="records")}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
