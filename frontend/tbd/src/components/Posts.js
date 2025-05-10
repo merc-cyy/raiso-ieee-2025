@@ -34,6 +34,7 @@ function Posts() {
 
   useEffect(() => {
     const fetchLikedJobs = async () => {
+      console.log("Trying to fetch jobs")
       if (userId && likedJobs.length === 0) {
         try {
           const res = await fetch(`${backendApiUrl}/interests/liked/ids/${userId}`);
@@ -50,6 +51,7 @@ function Posts() {
     const fetchAppliedJobs = async () => {
       if (userId && appliedJobs.length === 0) {
         try {
+          console.log("Trying to fetch jobs")
           const res = await fetch(`${backendApiUrl}/interests/applied/ids/${userId}`);
           if (res.ok) {
             const data = await res.json();
