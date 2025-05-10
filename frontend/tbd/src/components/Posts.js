@@ -19,6 +19,8 @@ function Posts() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedJobId, setExpandedJobId] = useState(null);
+  const [recommendedJobs, setRecommendedJobs] = useState([]);
+
   const itemsPerPage = 6;
 
   useEffect(() => {
@@ -149,7 +151,9 @@ function Posts() {
         setLoading(false);
       }
     };
-    fetchAllJobs();
+    if (userId && !newinterest && recommendedJobs.length === 0) {
+      fetchAllJobs();
+    }
   }, [userId]);
 
   const filteredJobs = useMemo(() => {
