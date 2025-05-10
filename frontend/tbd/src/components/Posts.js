@@ -8,6 +8,7 @@ function Posts() {
   const [userId, setUserId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const backendApiUrl = 'https://backend-ieee.onrender.com';
+  const fastApiUrl = 'https://mldsnuvolunteers-957655660599.us-central1.run.app/';
 
   const [likedJobs, setLikedJobs] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
@@ -114,7 +115,7 @@ function Posts() {
     } catch (error) {
       setError(error.message);
       setAllJobs([]);
-    } finally {
+    } finally { 
       setLoading(false);
     }
   };
@@ -160,6 +161,40 @@ function Posts() {
       });
   }, [allJobs, appliedJobs, searchTerm]);
 
+  const generateJobs = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const userInput = interests || ""; // Or however you're capturing user text
+  
+      const res = await fetch(`${fastApiUrl}/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ input: userInput }),
+      });
+  
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  
+      const data = await res.json();
+  
+      const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
+      const prioritizedJobs = data.sort((a, b) => {
+        const orgA = a.organization?.toUpperCase().trim();
+        const orgB = b.organization?.toUpperCase().trim();
+        return (orgA === sponsor ? -1 : orgB === sponsor ? 1 : 0);
+      });
+  
+      setRecommendedJobs(prioritizedJobs);
+      setError(null);
+    } catch (error) {
+      setError(error.message);
+      setRecommendedJobs([]);
+    }
+  };
+  
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentJobs = filteredJobs.slice(startIndex, startIndex + itemsPerPage);
   const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
@@ -188,7 +223,7 @@ function Posts() {
 
       <div className='row'>
         <div className='col-12 col-lg-8 mb-4'>
-          {currentJobs.map((job) => (
+          {(recommendedJobs.length > 0 ? recommendedJobs : currentJobs).map((job) => (
             <div className={`card mb-3 custom-card ${job.organization === 'MEALS ON WHEELS NORTHEASTERN ILLINOIS' ? 'highlight-meals promoted-card' : ''}`} key={job.id}>
               <div className='card-header d-flex justify-content-between align-items-center'>
                 {job.title}
@@ -225,7 +260,7 @@ function Posts() {
           <div className='p-4 bg-light rounded shadow-sm'>
             <h5>Customize Recommendations</h5>
             <p>Use this space to describe what you're looking for—we’ll generate relevant roles for you!</p>
-            <form>
+            <form onSubmit={generateJobs}>
               <div className='mb-3'>
                 <label htmlFor='interests' className='form-label'>Your Interests</label>
                 <textarea className='form-control' id='interests' rows='3' value={interests} onChange={(e) => setInterests(e.target.value)}></textarea>
