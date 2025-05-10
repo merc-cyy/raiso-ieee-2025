@@ -61,8 +61,9 @@ function Posts() {
       }
     };
 
+    if (userId){
     fetchLikedJobs();
-    fetchAppliedJobs();
+    fetchAppliedJobs();}
   }, [userId]);
 
   const updateInterestInDB = async (jobId, actionType) => {
