@@ -1,136 +1,129 @@
-
-
-
 import React, { useEffect, useState } from 'react';
 
 function Posts() {
-  // Get authentication and user ID
   const authToken = localStorage.getItem('authToken');
-  let userAuthData = null;
-  let userId = null;
   const storedUserAuthData = localStorage.getItem('userAuthData');
   const [interests, setInterests] = useState('');
+  const [userId, setUserId] = useState(null);
 
-  if (storedUserAuthData) {
-    try {
-      userAuthData = JSON.parse(storedUserAuthData);
-      userId = userAuthData?.id;
-    } catch (error) {
-      console.error("Error parsing userAuthData:", error);
-    }
-  }
-  console.log("User ID:", userId);
-
-  // Backend API URL
   const backendApiUrl = 'https://backend-ieee.onrender.com';
-  // const backendApiUrl = 'http://localhost:5001'; // LOCAL URLS FOR LOCAL DEPLOY
-  // const fastApiUrl = 'http://127.0.0.1:8000';
-  // const fastApiUrl = 'https://ieee-fastapi2.onrender.com';
 
-  // Function to add like/apply action to the database
-  const updateInterestInDB = async (jobId, actionType) => {
-    try {
-      const res = await fetch(`${backendApiUrl}/interests/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: userId,
-          job_id: jobId,
-          type: actionType // 'like' or 'apply'
-        })
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        console.log(`Job ID ${jobId} is now ${actionType}ed in the database!`);
-      } else {
-        const errorData = await res.json();
-        throw new Error(`${actionType.charAt(0).toUpperCase() + actionType.slice(1)} Action Failed: ${errorData.error || 'Unknown error'}`);
-      }
-    } catch (error) {
-      console.error(`${actionType.charAt(0).toUpperCase() + actionType.slice(1)} Action Failed`, error);
-    }
-  };
-
-  // Function to apply for a post
-  const handleApply = async (jobId) => {
-    setAppliedJobs(prevAppliedJobs => [...prevAppliedJobs, jobId]);
-    await updateInterestInDB(jobId, 'apply');
-    // No need to call handleLike here separately for applying,
-    // as applying implicitly shows interest.
-  };
-
-  // Function to like a post
-  const handleLike = async (jobId) => {
-    console.log("logging the initial likedjobs here", likedJobs);
-
-    console.log(`About to like job with ID: ${jobId}`);
-    if (likedJobs.includes(jobId)) {
-      console.log(`Job ID ${jobId} is already liked in this session.`);
-      return; // Don't proceed with the API call or state update
-    }
-    console.log(`Job id not yet liked so will proceed with api call`);
-
-    setLikedJobs(prevLikedJobs => [...prevLikedJobs, jobId]); // Add to the list of liked jobs locally
-    await updateInterestInDB(jobId, 'like');
-  };
-
-  // Liked and applied jobs state
   const [likedJobs, setLikedJobs] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
-
-  // Function to check if a job is liked
-  const isJobLiked = (jobId) => {
-    return likedJobs.includes(jobId);
-  };
-
-  // Function to check if a job is applied
-  const isJobApplied = (jobId) => {
-    return appliedJobs.includes(jobId);
-  };
-
-  // State for expanded job card
-  const [expandedJobId, setExpandedJobId] = useState(null);
-
-  // Function to toggle job card expansion
-  const toggleExpand = (id) => {
-    setExpandedJobId(prevId => (prevId === id ? null : id));
-  };
-
-  // State for all jobs, loading, error, and pagination
   const [allJobs, setAllJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [expandedJobId, setExpandedJobId] = useState(null);
+
   const itemsPerPage = 6;
 
-  // Function to fetch backup jobs
+  useEffect(() => {
+    if (storedUserAuthData) {
+      try {
+        const userAuthData = JSON.parse(storedUserAuthData);
+        setUserId(userAuthData?.id);
+      } catch (error) {
+        console.error("Error parsing userAuthData:", error);
+      }
+    }
+  }, [storedUserAuthData]);
+
+  useEffect(() => {
+    const fetchLikedJobs = async () => {
+      if (userId) {
+        try {
+          const res = await fetch(`${backendApiUrl}/interests/liked/ids/${userId}`);
+          if (res.ok) {
+            const data = await res.json();
+            setLikedJobs(data);
+          }
+        } catch (error) {
+          console.error("Error fetching liked jobs:", error);
+        }
+      }
+    };
+
+    const fetchAppliedJobs = async () => {
+      if (userId) {
+        try {
+          const res = await fetch(`${backendApiUrl}/interests/applied/ids/${userId}`);
+          if (res.ok) {
+            const data = await res.json();
+            setAppliedJobs(data);
+          }
+        } catch (error) {
+          console.error("Error fetching applied jobs:", error);
+        }
+      }
+    };
+
+    fetchLikedJobs();
+    fetchAppliedJobs();
+  }, [userId]);
+
+  const updateInterestInDB = async (jobId, actionType) => {
+    if (userId) {
+      try {
+        const res = await fetch(`${backendApiUrl}/interests/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId,
+            job_id: jobId,
+            type: actionType
+          })
+        });
+
+        if (res.ok) {
+          if (actionType === 'like' && !likedJobs.includes(jobId)) {
+            setLikedJobs(prev => [...prev, jobId]);
+          } else if (actionType === 'apply' && !appliedJobs.includes(jobId)) {
+            setAppliedJobs(prev => [...prev, jobId]);
+          }
+        }
+      } catch (error) {
+        console.error(`${actionType} Action Failed`, error);
+      }
+    }
+  };
+
+  const handleApply = async (jobId) => {
+    if (!appliedJobs.includes(jobId)) {
+      await updateInterestInDB(jobId, 'apply');
+    }
+  };
+
+  const handleLike = async (jobId) => {
+    if (!likedJobs.includes(jobId)) {
+      await updateInterestInDB(jobId, 'like');
+    }
+  };
+
+  const isJobLiked = (jobId) => likedJobs.includes(jobId);
+  const isJobApplied = (jobId) => appliedJobs.includes(jobId);
+
+  const toggleExpand = (id) => {
+    setExpandedJobId(prevId => (prevId === id ? null : id));
+  };
+
   const backupJobs = async () => {
-    console.log("GETTING BACKUP JOBS SINCE ONE OF THE MODELS FAILED");
     setLoading(true);
     setError(null);
 
     try {
       const res = await fetch(`${backendApiUrl}/posts/?limit=250`);
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
       const data = await res.json();
       const prioritizedJobs = data.sort((a, b) => {
         const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
-        const isA = a.organization === sponsor;
-        const isB = b.organization === sponsor;
-
-        if (isA && !isB) return -1;
-        if (!isA && isB) return 1;
-        return 0; // keep existing order if both are same type
+        return (a.organization === sponsor ? -1 : b.organization === sponsor ? 1 : 0);
       });
 
       setAllJobs(prioritizedJobs);
     } catch (error) {
-      setError(error.message); // Set error to be that message
+      setError(error.message);
       setAllJobs([]);
     } finally {
       setLoading(false);
@@ -138,49 +131,11 @@ function Posts() {
   };
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
-
     const fetchAllJobs = async () => {
-      console.log("SENDING GENERATE");
       try {
-        // const timeoutPromise = new Promise((_, reject) =>
-        //   setTimeout(() => reject(new Error("Request timed out")), 5000) // 5 seconds
-        // );
-        // const res = await fetch(`${fastApiUrl}/recommend/`,
-        // {
-        //   method: 'POST',
-        //   headers: { 'Content-Type' : 'application/json'},
-        //   body : JSON.stringify({userid : userId})
-        // }
-        // );
-        // if (!res.ok){
-        //       throw new Error(`HTTP error! status: ${res.status}`);
-        //     }
-        // console.log("SENT GENERATE")
-
-        // const data = await res.json();
-        // console.log("DATA")
-        // console.log(data)
-        // const jobs = data.jobs
-        // console.log(jobs)
-        // const prioritizedJobs = jobs.sort((a, b) => {
-        // const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
-        // const isA = a.organization === sponsor;
-        // const isB = b.organization === sponsor;
-
-        // if (isA && !isB) return -1;
-        // if (!isA && isB) return 1;
-        // return 0;}); // keep existing order if both are same type
-
-        // setAllJobs(prioritizedJobs);
         await backupJobs();
       } catch (error) {
-        console.log("Couldn't generate recommended jobs.");
-        console.log(error.message);
-        //setError(error.message);//set error to be that message
         setAllJobs([]);
-        //await backupJobs();//call backupJobs
       } finally {
         setLoading(false);
       }
@@ -188,58 +143,43 @@ function Posts() {
     fetchAllJobs();
   }, [userId]);
 
-  // Filter out applied jobs (unless it's a sponsored event)
   const filteredJobs = allJobs.filter(job => !appliedJobs.includes(job.id) || job.organization === 'MEALS ON WHEELS NORTHEASTERN ILLINOIS');
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentJobs = filteredJobs.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.ceil(filteredJobs.length / itemsPerPage);
 
-  const startIndex = (currentPage - 1) * itemsPerPage; // First index of the current page
-  const endIndex = startIndex + itemsPerPage; // Last index of the current page
-  const currentJobs = filteredJobs.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(filteredJobs.length / itemsPerPage); // Total number of pages
-
-  // Function to handle page change
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
 
-  // const handleGenerate = async (e) => {//CASEY
-
-  // };
-
-  if (loading) {
-    return <div className='container mt-4 text-center'>Loading volunteer opportunities...</div>;
-  }
-
-  if (error) {
-    return <div className='container mt-4 text-center'>Error loading volunteer opportunities: {error}</div>;
-  }
+  if (loading) return <div className='container mt-4 text-center'>Loading volunteer opportunities...</div>;
+  if (error) return <div className='container mt-4 text-center'>Error loading volunteer opportunities: {error}</div>;
 
   return (
     <div className='container mt-4'>
       <div className='row'>
         <div className='col-12 col-md-7'>
           <div className='pt-4 text-center'>
-            <h2> Volunteer Opportunities</h2>
+            <h2>Volunteer Opportunities</h2>
           </div>
 
           <div className='d-flex justify-content-center gap-5 flex-wrap mt-3'>
-            <button className={` btn btn-primary custom-btn-post-color mx-5 ${currentPage === 1 ? 'disabled' : ''}`} onClick={() => handlePageChange(currentPage - 1)}> Previous</button>
-            <button className={`btn btn-primary custom-btn-post-color mx-5 ${currentPage === totalPages ? 'disabled' : ''}`} onClick={() => handlePageChange(currentPage + 1)}> Next</button>
+            <button className={`btn btn-primary custom-btn-post-color mx-5 ${currentPage === 1 ? 'disabled' : ''}`} onClick={() => handlePageChange(currentPage - 1)}>Previous</button>
+            <button className={`btn btn-primary custom-btn-post-color mx-5 ${currentPage === totalPages ? 'disabled' : ''}`} onClick={() => handlePageChange(currentPage + 1)}>Next</button>
           </div>
 
           <div className='pt-4 d-flex flex-column align-items-center row-gap-4'>
             {currentJobs.map((job) => (
               <div className={`card custom-card custom-card-bg-color ${job.organization === 'MEALS ON WHEELS NORTHEASTERN ILLINOIS' ? 'highlight-meals' : ''}`} key={job.id}>
-                <div className="card-header card-header-bg-color" >
-                  {job.title}
-                </div>
+                <div className="card-header card-header-bg-color">{job.title}</div>
                 <div className="card-body">
                   <div className='d-flex justify-content-between'>
-                    <h5 className="card-title" style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => toggleExpand(job.id)} >{job.organization}</h5>
+                    <h5 className="card-title" style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={() => toggleExpand(job.id)}>{job.organization}</h5>
                     <h6>{job.location}</h6>
                   </div>
-                  <p className="card-text">{job.description} </p>
+                  <p className="card-text">{job.description}</p>
                   {expandedJobId === job.id && (
                     <>
                       <p className="card-text mt-2"><b>Eligibility:</b> {job.requirement}</p>
@@ -251,7 +191,6 @@ function Posts() {
                       <button
                         className="btn btn-primary custom-btn-post-color"
                         style={{
-                          cursor: 'pointer',
                           backgroundColor: isJobApplied(job.id) ? '#B1DABE' : '',
                           color: isJobApplied(job.id) ? 'black' : '',
                         }}
@@ -263,7 +202,6 @@ function Posts() {
                     </div>
                     <div className='col-3 d-flex justify-content-around'>
                       <i className={`bi bi-hand-thumbs-up fs-3 ${isJobLiked(job.id) ? 'liked' : ''}`} style={{ cursor: 'pointer' }} onClick={() => handleLike(job.id)}></i>
-                      {/* <i className="bi bi-hand-thumbs-down"></i> */}
                     </div>
                   </div>
                 </div>
@@ -274,141 +212,77 @@ function Posts() {
 
         <div className='col-12 col-md-5 vh-100'>
           <div className='row text-center h-40'>
-            {/* <i className="bi bi-person-circle"  style='font-size: 50em;'></i> */}
             <div className="icon-container" style={{ width: "100%", height: "100%" }}>
               <i className="bi bi-person-circle" style={{ fontSize: "10em", color: '#8CABF7' }}></i>
             </div>
           </div>
 
           <div className='row'>
-            <button className='btn btn-secondary btn-poster '>Customize your Posts!</button>
+            <button className='btn btn-secondary btn-poster'>Customize your Posts!</button>
           </div>
 
           <div className='row'>
-            {/* */}
-
             <form className='pt-4'>
               <div>
-                <h5 className='custom-landing-text mb-0'></h5>
                 <p className='ps-3'>Use this space to search for any specific interests you may have and our model will recommend them for you!</p>
               </div>
 
               <div className='container pt-1 custom-form-section custom-form-blurb-color'>
-                <div class="row g-3 pb-3">
-                  <div class="col">
-                    <label for="title" className="form-label">Title</label>
+                <div className="row g-3 pb-3">
+                  <div className="col">
+                    <label htmlFor="title" className="form-label">Title</label>
                     <input className="form-control" placeholder='What role would you like to do?' id="title" />
                   </div>
                 </div>
 
-
-                <div class='row g-3 pb-3'>
-                  <div class="col">
-                    <label for="org" class="form-label">Organization</label>
-                    <input class="form-control" placeholder='Any organization in mind?' id="org" />
+                <div className='row g-3 pb-3'>
+                  <div className="col">
+                    <label htmlFor="org" className="form-label">Organization</label>
+                    <input className="form-control" placeholder='Any organization in mind?' id="org" />
                   </div>
-
                 </div>
 
                 <div className='row g-3 pb-3'>
-                  <div class="col-md-7">
-                    <label for="city" class="form-label">City</label>
-                    <input type="text" placeholder='Location preferences?' class="form-control" id="city" />
+                  <div className="col-md-7">
+                    <label htmlFor="city" className="form-label">City</label>
+                    <input type="text" placeholder='Location preferences?' className="form-control" id="city" />
                   </div>
 
-                  <div class="col-md-5">
-                    <label for="inputState" class="form-label">State</label>
-                    <select id="inputState" class="form-select" >
-                      <option selected>Choose...</option>
-                      <option value="AL">Alabama</option>
-                      <option value="AK">Alaska</option>
-                      <option value="AZ">Arizona</option>
-                      <option value="AR">Arkansas</option>
-                      <option value="CA">California</option>
-                      <option value="CO">Colorado</option>
-                      <option value="CT">Connecticut</option>
-                      <option value="DE">Delaware</option>
-                      <option value="FL">Florida</option>
-                      <option value="GA">Georgia</option>
-                      <option value="HI">Hawaii</option>
-                      <option value="ID">Idaho</option>
-                      <option value="IL">Illinois</option>
-                      <option value="IN">Indiana</option>
-                      <option value="IA">Iowa</option>
-                      <option value="KS">Kansas</option>
-                      <option value="KY">Kentucky</option>
-                      <option value="LA">Louisiana</option>
-                      <option value="ME">Maine</option>
-                      <option value="MD">Maryland</option>
-                      <option value="MA">Massachusetts</option>
-                      <option value="MI">Michigan</option>
-                      <option value="MN">Minnesota</option>
-                      <option value="MS">Mississippi</option>
-                      <option value="MO">Missouri</option>
-                      <option value="MT">Montana</option>
-                      <option value="NE">Nebraska</option>
-                      <option value="NV">Nevada</option>
-                      <option value="NH">New Hampshire</option>
-                      <option value="NJ">New Jersey</option>
-                      <option value="NM">New Mexico</option>
-                      <option value="NY">New York</option>
-                      <option value="NC">North Carolina</option>
-                      <option value="ND">North Dakota</option>
-                      <option value="OH">Ohio</option>
-                      <option value="OK">Oklahoma</option>
-                      <option value="OR">Oregon</option>
-                      <option value="PA">Pennsylvania</option>
-                      <option value="RI">Rhode Island</option>
-                      <option value="SC">South Carolina</option>
-                      <option value="SD">South Dakota</option>
-                      <option value="TN">Tennessee</option>
-                      <option value="TX">Texas</option>
-                      <option value="UT">Utah</option>
-                      <option value="VT">Vermont</option>
-                      <option value="VA">Virginia</option>
-                      <option value="WA">Washington</option>
-                      <option value="WV">West Virginia</option>
-                      <option value="WI">Wisconsin</option>
-                      <option value="WY">Wyoming</option>
+                  <div className="col-md-5">
+                    <label htmlFor="inputState" className="form-label">State</label>
+                    <select id="inputState" className="form-select">
+                      <option>Choose...</option>
+                      {['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'].map(state =>
+                        <option key={state} value={state}>{state}</option>
+                      )}
                     </select>
                   </div>
-
                 </div>
               </div>
 
-                                    <div>
-                             <h5 className='custom-landing-text pt-5'>Skills and Interests</h5>
-                               <p className='ps-3 mt-2'>Our application uses the information you enter here to match you to relevant volunteer opportunities around your area. Don't be shy to include any skills you may have as well as areas you are interested in volunteering.</p>
-                       </div>
+              <div>
+                <h5 className='custom-landing-text pt-5'>Skills and Interests</h5>
+                <p className='ps-3 mt-2'>Our application uses the information you enter here to match you to relevant volunteer opportunities around your area.</p>
+              </div>
 
-                         <div className='container pt-1 custom-form-section custom-form-blurb-color'>
-                            <div className='row g-3 pb-3'>
-                                 <div class="col">
-                                     <label for="interests" class="form-label"></label> 
-                                        <textarea class="form-control" id="interests" rows="3" value={interests} onChange={(e) => setInterests(e.target.value)}></textarea>
-                                </div>
-                             </div>
+              <div className='container pt-1 custom-form-section custom-form-blurb-color'>
+                <div className='row g-3 pb-3'>
+                  <div className="col">
+                    <label htmlFor="interests" className="form-label">Your Interests</label>
+                    <textarea className="form-control" id="interests" rows="3" value={interests} onChange={(e) => setInterests(e.target.value)}></textarea>
+                  </div>
+                </div>
 
-                             <div class="col-12">
-                                     <button type="submit" className="btn btn-primary custom-btn-post-color" >Generate</button>
-                             </div>
-
-                        </div>
-
-              
-                     </form>
-
-                   {/*  */}
-             </div>
-
-           </div>
-       </div>
-     </div>
-
-
+                <div className="col-12">
+                  <button type="submit" className="btn btn-primary custom-btn-post-color">Generate</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   );
-};
+}
 
 export default Posts;
-
-
