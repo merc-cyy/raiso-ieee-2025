@@ -108,7 +108,7 @@ router.post('/signup', async (req, res) => {
 
     if (userError) {
       console.log('User table insert error:', userError);
-      return res.status(500).json({ error: userError.message });
+      return res.status(500).json({ error: "Try logging in on the login page" });
     }
 
     // Return success
