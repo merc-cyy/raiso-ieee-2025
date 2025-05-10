@@ -8,8 +8,8 @@ function StudentDashboard() {
     // const firstName = profileData.first_name
     // const lastName = profileData.last_name
 
-    const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
-    //const backendApiUrl = 'http://localhost:5001';
+   // const backendApiUrl = 'https://raiso-ieee-2025.onrender.com';
+    const backendApiUrl ='https://backend-ieee.onrender.com';
     const navigate = useNavigate();
     
     const authToken = localStorage.getItem('authToken');
@@ -116,7 +116,7 @@ function StudentDashboard() {
                             <i class="bi bi-person-fill fs-1 custom-icon-color"></i>
                         </div>
                     <div>
-                    <h5>Mercy Muiruri</h5>
+                    <h5>{firstname} {lastname}</h5>
                     {/* Optional: User Role */}
                     <p className="text-muted small">Student</p>
                             </div>

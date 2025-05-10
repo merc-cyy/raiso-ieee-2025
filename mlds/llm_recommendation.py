@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import openai
 import tiktoken
+import tempfile
 
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader
@@ -14,38 +15,48 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import RetrievalQA
 
 class llmRecommender:
-    def __init__(self, supabase, blurb):
+    def __init__(self, supabase):
         self.supabase = supabase
-        self.blurb = blurb
-        self.data = None
+        self.df = None
         self.embeddings = OpenAIEmbeddings()
         self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0)
         self.vectorstore = None
         self.retriever = None
         self.qa_chain = None
-        self.load_data()
+        self.jobs_table = 'jobs'
 
     def fetch_data(self):
-        # Fetch opportunities from the Supabase database
-        response = self.supabase.table('jobs').select(
+        # fetch opportunities
+        response = self.supabase.table(self.jobs_table).select(
             'id, title, organization, description, date, location, skills, requirement'
         ).execute()
-        # Load data into a DataFrame
         self.df = pd.DataFrame(response.data)
-        self.df["summarized"] = ("title: " + self.df.Title.str.strip() + "; description: " + 
-                                 self.df.Description.str.strip() + "; date: " + 
-                                 self.df.Date.str.strip() + "; skills: " + 
-                                 self.df.Skills.str.strip() + 
-                                 self.df.Date.str.strip() + "; requirements: " + 
-                                 self.df.Requirement.str.strip())
+        self.preprocess()
+
+    def preprocess(self):
+        self.df['summarized'] = (
+            self.df['title'].fillna('') + ' ' +
+            self.df['description'].fillna('') + ' ' +
+            self.df['location'].fillna('') + ' ' +
+            self.df['skills'].fillna('') + ' ' +
+            self.df['requirement'].fillna('')
+    )
 
     def load_data(self):
-        # Convert DataFrame to CSV format
-        csv_data = self.df[['summarized']].to_csv(index=False)
-        # Create a CSVLoader instance
-        loader = CSVLoader(file_path=csv_data)
-        # Load documents from the CSV data
-        documents = loader.load()
+        with tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=".csv") as tmp_file:
+            self.df[['summarized']].to_csv(tmp_file.name, index=False)
+            tmp_file.flush()
+            print("csv data okay:", tmp_file.name)
+
+            loader = CSVLoader(file_path=tmp_file.name)
+            documents = loader.load()
+        # # Convert DataFrame to CSV format
+        # csv_data = self.df['summarized'].to_csv(index=False)
+        # print("csv data okay")
+        # # Create a CSVLoader instance
+        # loader = CSVLoader(file_path=csv_data)
+        # # Load documents from the CSV data
+        # documents = loader.load()
         # Split documents into smaller chunks
         text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
         texts = text_splitter.split_documents(documents)
@@ -61,18 +72,18 @@ class llmRecommender:
             retriever=self.retriever
         )
 
-    def recommend(self):
+    def recommend(self, blurb):
         # Build the QA chain
         self.build_qa_chain()
 
         # Get recommendations based on the query
         # the query is the blurb plus a given prompt
-        self.query = f"Based on the following blurb: {self.blurb}, recommend 20 relevant opportunities. (only the title)"
-        response = self.qa_chain({"query": self.query})
+        self.query = f"Based on the following blurb: {blurb}, Give 20 suggestions. (only the title)"
+        response = self.qa_chain.invoke({"query": self.query})
         text = response['result']
-
+        print(text)
         # parse the result to extract the recommended opportunities
-        recommended_opportunities = []
+        recommended_opportunities = pd.DataFrame()
         for line in text.split('\n'):
             # Check if the line starts with a number followed by a period and space
             if line.strip() and line[0].isdigit() and '. ' in line:
@@ -81,9 +92,9 @@ class llmRecommender:
                 
                 try:
                     # Find the corresponding row in the DataFrame
-                    row = self.df[self.df['Title'].str.contains(title, na=False)]
+                    row = self.df[self.df['title'].str.contains(title)]
                     if not row.empty:
-                        recommended_opportunities.append(row)
+                        recommended_opportunities = pd.concat([recommended_opportunities, row])
                 except Exception as e:
                     print(f"Error finding row for title '{title}': {e}")
                     continue

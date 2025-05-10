@@ -20,7 +20,9 @@ app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
 app.use('/interests', interestsRouter);
 
-app.listen(5001, () => console.log('Server running on port 5001'));
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 
 app.get('/api/test-supabase', async (req, res) => {
     const { data, error } = await supabase.from('users').select('*').limit(1);

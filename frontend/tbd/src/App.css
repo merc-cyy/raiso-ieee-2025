@@ -260,3 +260,7 @@ a[href^="http"]:hover::after, a[href^="mailto:"]:hover::after {
   transform: scaleX(1);
   transform-origin: left; /* Animate toward the left */
 }
+
+.liked{
+  color:green;
+}

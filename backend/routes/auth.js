@@ -35,110 +35,203 @@ const router = express.Router();
 //       res.status(201).json({ user: data[0] });
 //     });
 
-
-/////////////////////////////
 router.post('/signup', async (req, res) => {
   console.log('Received POST request at /auth/signup'); 
   const {
-        email,
-        password,
-        firstName,
-        lastName,
-        city,
-        state,
-        zipcode,
-        description
-    } = req.body;//from the frontend
+    email,
+    password,
+    firstName,
+    lastName,
+    city,
+    state,
+    zipcode,
+    description
+  } = req.body;
 
   console.log({
     email,
-        password,
-        firstName,
-        lastName,
-        city,
-        state,
-        zipcode,
-        description
-  })
+    password,
+    firstName,
+    lastName,
+    city,
+    state,
+    zipcode,
+    description
+  });
 
-  if (!email || !password){
-    console.log("error: ", authError.message)
-    return res.status(400).json({error: "Email and password are needed"})
+  if (!email || !password) {
+    console.log("Missing email or password");
+    return res.status(400).json({error: "Email and password are needed"});
   }
 
-  try
-  {
-    
-    //add user to the auth table
+  try {
+    // Add user to the auth table
     const {data: authData, error: authError} = await supabase.auth.signUp({
       email: email,
       password: password
-    })
-  
-    console.log("logging stuff below")
+    });
 
-    if (authError)//in case of authentication error
-    {
-      if (authError.message.includes('User already registered'))
-      {
+    console.log("Logging stuff below");
+
+    if (authError) {
+      if (authError.message.includes('User already registered')) {
         return res.status(400).json({error: "You have already signed up. Try resetting your password."});
       }
       
-      
-        console.log("ERROR IN ADDING USER TO AUTH TABLE: ", authError.message)
-        return res.status(400).json({error: authError.message})
-      
+      console.log("ERROR IN ADDING USER TO AUTH TABLE: ", authError.message);
+      return res.status(400).json({error: authError.message});
     }
 
-    if (!authError){
-      console.log("USER ADDED TO AUTH TABLE")
+    if (!authError) {
+      console.log("USER ADDED TO AUTH TABLE");
     }
 
-    const userId = authData.user.id
-    console.log(userId)
-    //insert into users table'
-    const {data: userData, error: userError} = await supabase
-            .from('users')
-            .insert([
-              {
-                userauth_id: userId, // Use the ID from Supabase Auth
-                email: email,
-                first_name: firstName,
-                last_name: lastName,
-                city: city,
-                state: state,
-                zipcode: zipcode,
-                description: description,
-              }
-            ])
-            .select();//select new row 
-      
+    const userId = authData.user.id;
+    console.log(userId);
+
+    // Insert into users table (Parallelized)
+    const userInsertPromise = supabase.from('users').insert([
+      {
+        userauth_id: userId, 
+        email: email,
+        first_name: firstName,
+        last_name: lastName,
+        city: city,
+        state: state,
+        zipcode: zipcode,
+        description: description,
+      }
+    ]).select(); // Select new row
+
+    // Wait for both operations to complete
+    const [userData, userError] = await Promise.all([userInsertPromise]);
 
     if (userError) {
-            // If there's an error inserting into the 'users' table,
-            console.log('User table insert error:', userError);
-            return res.status(500).json({ error: userError.message });
-        }///POTENTIAL BUG: ROLLING BACK?
-
-    res.status(201).json({
-      user: userData[0]
-    })
-
-    if (!userError){
-      console.log("User added to users table")
+      console.log('User table insert error:', userError);
+      return res.status(500).json({ error: "Try logging in on the login page" });
     }
-    
 
-  }
+    // Return success
+    res.status(201).json({
+      user: userData[0] // Sending the inserted user data back
+    });
 
-  catch(error)
-  {
+    if (!userError) {
+      console.log("User added to users table");
+    }
+
+  } catch (error) {
     console.error('Error during signup:', error);
     res.status(500).json({ error: 'Internal server error during signup' });
-  
   }
-
 });
+
+
+// /////////////////////////////
+// router.post('/signup', async (req, res) => {
+//   console.log('Received POST request at /auth/signup'); 
+//   const {
+//         email,
+//         password,
+//         firstName,
+//         lastName,
+//         city,
+//         state,
+//         zipcode,
+//         description
+//     } = req.body;//from the frontend
+
+//   console.log({
+//     email,
+//         password,
+//         firstName,
+//         lastName,
+//         city,
+//         state,
+//         zipcode,
+//         description
+//   })
+
+//   if (!email || !password){
+//     console.log("Missing email or password");
+//     return res.status(400).json({error: "Email and password are needed"})
+//   }
+
+//   try
+//   {
+    
+//     //add user to the auth table
+//     const {data: authData, error: authError} = await supabase.auth.signUp({
+//       email: email,
+//       password: password
+//     })
+  
+//     console.log("logging stuff below")
+
+//     if (authError)//in case of authentication error
+//     {
+//       if (authError.message.includes('User already registered'))
+//       {
+//         return res.status(400).json({error: "You have already signed up. Try resetting your password."});
+//       }
+      
+      
+//         console.log("ERROR IN ADDING USER TO AUTH TABLE: ", authError.message)
+//         return res.status(400).json({error: authError.message})
+      
+//     }
+
+//     if (!authError){
+//       console.log("USER ADDED TO AUTH TABLE")
+//     }
+
+//     const userId = authData.user.id
+//     console.log(userId)
+//     //insert into users table'
+//     const {data: userData, error: userError} = await supabase
+//             .from('users')
+//             .insert([
+//               {
+//                 userauth_id: userId, // Use the ID from Supabase Auth
+//                 email: email,
+//                 first_name: firstName,
+//                 last_name: lastName,
+//                 city: city,
+//                 state: state,
+//                 zipcode: zipcode,
+//                 description: description,
+//               }
+//             ])
+//             .select();//select new row 
+//     console.log("Insert result:", { userData, userError });
+
+      
+
+//     if (userError) {
+//             // If there's an error inserting into the 'users' table,
+//             console.log('User table insert error:', userError);
+//             return res.status(500).json({ error: userError.message });
+//         }///POTENTIAL BUG: ROLLING BACK?
+
+//     res.status(201).json({
+//       user: userData[0]
+//     })
+
+//     if (!userError){
+//       console.log("User added to users table")
+//     }
+    
+
+//   }
+
+//   catch(error)
+//   {
+//     console.error('Error during signup:', error);
+//     res.status(500).json({ error: 'Internal server error during signup' });
+  
+//   }
+
+// });
 
 ///////////////////////////
 //login
