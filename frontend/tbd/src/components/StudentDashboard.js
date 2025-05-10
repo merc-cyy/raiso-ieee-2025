@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 function StudentDashboard() {
     // Mock data for interested posts - replace with actual data fetching
-    const profileData = JSON.parse(localStorage.getItem('profileData'));
+    //const profileData = JSON.parse(localStorage.getItem('profileData'));
     const firstName = profileData.first_name
     const lastName = profileData.last_name
 
