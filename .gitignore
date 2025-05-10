@@ -79,3 +79,5 @@ __pycache__
 mlds/.env
 
 mlds/__pycache__
+
+notes.py 
