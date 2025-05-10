@@ -163,6 +163,7 @@ function Posts() {
 
   const generateJobs = async (e) => {
     e.preventDefault();
+    console.log("GENERATE FUNCTION WORKING")
   
     try {
       const userInput = interests || ""; // Or however you're capturing user text
@@ -172,12 +173,13 @@ function Posts() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ input: userInput }),
+        body: JSON.stringify({ input: interests }),
       });
   
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
   
       const data = await res.json();
+      console.log("RECOMMENDED JOBS WORKING")
   
       const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
       const prioritizedJobs = data.sort((a, b) => {
@@ -189,6 +191,7 @@ function Posts() {
       setRecommendedJobs(prioritizedJobs);
       setError(null);
     } catch (error) {
+      console.log("NO RECOMMENDED JOBS")
       setError(error.message);
       setRecommendedJobs([]);
     }
