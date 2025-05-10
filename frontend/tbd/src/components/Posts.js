@@ -201,15 +201,16 @@ function Posts() {
         body: JSON.stringify({ blurb: newinterest }),
       });
 
-      
+
   
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
   
       const data = await res.json();
       console.log("RECOMMENDED JOBS WORKING")
+      console.log(data)
   
       const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
-      const prioritizedJobs = data.sort((a, b) => {
+      const prioritizedJobs = data.jobs.sort((a, b) => {
         const orgA = a.organization?.toUpperCase().trim();
         const orgB = b.organization?.toUpperCase().trim();
         return (orgA === sponsor ? -1 : orgB === sponsor ? 1 : 0);
@@ -220,7 +221,7 @@ function Posts() {
     } catch (error) {
 
       console.log("NO RECOMMENDED JOBS")
-      await fetchAllJobs();
+      //await fetchAllJobs();
       setRecommendedJobs([]);
       
     }
