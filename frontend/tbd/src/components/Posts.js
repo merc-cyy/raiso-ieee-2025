@@ -5,10 +5,12 @@ function Posts() {
   const authToken = localStorage.getItem('authToken');
   const storedUserAuthData = localStorage.getItem('userAuthData');
   const [interests, setInterests] = useState('');
+  const [newinterest, setNewInterest] = useState('');
   const [userId, setUserId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const backendApiUrl = 'https://backend-ieee.onrender.com';
   const fastApiUrl = 'https://mldsnuvolunteers-957655660599.us-central1.run.app/';
+ 
 
   const [likedJobs, setLikedJobs] = useState([]);
   const [appliedJobs, setAppliedJobs] = useState([]);
@@ -166,14 +168,13 @@ function Posts() {
     console.log("GENERATE FUNCTION WORKING")
   
     try {
-      const userInput = interests || ""; // Or however you're capturing user text
-  
+      
       const res = await fetch(`${fastApiUrl}/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ input: interests }),
+        body: JSON.stringify({ input: newinterest }),
       });
   
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -265,8 +266,8 @@ function Posts() {
             <p>Use this space to describe what you're looking for—we’ll generate relevant roles for you!</p>
             <form onSubmit={generateJobs}>
               <div className='mb-3'>
-                <label htmlFor='interests' className='form-label'>Your Interests</label>
-                <textarea className='form-control' id='interests' rows='3' value={interests} onChange={(e) => setInterests(e.target.value)}></textarea>
+                <label htmlFor='newinterest' className='form-label'>Your Interests</label>
+                <textarea className='form-control' id='newinterest' rows='3' value={newinterest} onChange={(e) => setNewInterest(e.target.value)}></textarea>
               </div>
               <button type='submit' className='btn custom-btn-post-color w-100'>Generate</button>
             </form>
