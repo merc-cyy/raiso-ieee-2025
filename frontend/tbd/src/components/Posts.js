@@ -201,12 +201,13 @@ function Posts() {
         body: JSON.stringify({ blurb: newinterest }),
       });
 
-      
+
   
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
   
       const data = await res.json();
       console.log("RECOMMENDED JOBS WORKING")
+      console.log(data)
   
       const sponsor = "MEALS ON WHEELS NORTHEASTERN ILLINOIS";
       const prioritizedJobs = data.sort((a, b) => {
