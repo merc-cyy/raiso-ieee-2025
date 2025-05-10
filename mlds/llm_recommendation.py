@@ -3,6 +3,8 @@ import numpy as np
 import openai
 import tiktoken
 import tempfile
+import os
+
 
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader
@@ -19,7 +21,7 @@ class llmRecommender:
         self.supabase = supabase
         self.df = None
         self.embeddings = OpenAIEmbeddings()
-        self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0)
+        self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0, openai_api_key=os.getenv("OPENAI_API_KEY"))
         self.vectorstore = None
         self.retriever = None
         self.qa_chain = None
