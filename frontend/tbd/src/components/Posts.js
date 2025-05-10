@@ -22,7 +22,7 @@ function Posts() {
   const itemsPerPage = 6;
 
   useEffect(() => {
-    if (storedUserAuthData) {
+    if (storedUserAuthData && !userId) {
       try {
         const userAuthData = JSON.parse(storedUserAuthData);
         setUserId(userAuthData?.id);
@@ -34,7 +34,7 @@ function Posts() {
 
   useEffect(() => {
     const fetchLikedJobs = async () => {
-      if (userId) {
+      if (userId && likedJobs.length === 0) {
         try {
           const res = await fetch(`${backendApiUrl}/interests/liked/ids/${userId}`);
           if (res.ok) {
@@ -48,7 +48,7 @@ function Posts() {
     };
 
     const fetchAppliedJobs = async () => {
-      if (userId) {
+      if (userId && appliedJobs.length === 0) {
         try {
           const res = await fetch(`${backendApiUrl}/interests/applied/ids/${userId}`);
           if (res.ok) {
