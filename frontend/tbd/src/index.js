@@ -1,7 +1,3 @@
-// Force HTTPS redirect if not already using HTTPS
-if (window.location.protocol !== "https:") {
-  window.location.href = "https:" + window.location.href.substring(window.location.protocol.length);
-}
 
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import 'bootstrap/dist/css/bootstrap.min.css';
