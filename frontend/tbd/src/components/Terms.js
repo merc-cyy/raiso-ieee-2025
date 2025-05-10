@@ -36,7 +36,7 @@ export default function TermsAndConditions() {
 
           <h2>4. Intellectual Property</h2>
           <p>
-            All content on NUVolunteers, including code, text, branding, and design, is owned or licensed by us unless otherwise stated.
+            All content on NUVolunteers, including code, text, branding, and design, is owned or licensed by ENGAGE., the development team behind NUVolunteers, unless otherwise stated.
             <strong> Users may not copy, distribute, reverse-engineer, publicly display, or otherwise exploit any part of NUVolunteers without express written permission.</strong>
           </p>
 
