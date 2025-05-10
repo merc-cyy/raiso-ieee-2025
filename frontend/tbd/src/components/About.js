@@ -39,7 +39,7 @@ function About() {
           <p>Finding talent for volunteer and intern opportunities is flawed, and our stakeholders agree. Mainstream platforms overwhelm users with numerous static filters to find opportunities, making the process rigid and impersonal for both students and organizations. We're reinventing the talent discovery process. Using a large-language model and recommendation algorithm, students no longer need to manually sift through opportunities. Instead, they can simply type a few sentences about themselves, and our platform will generate tailored opportunity matches. Not only does this approach enhance the student experience, but it also increases organization visibility and ensures a better fit between students and roles.</p>
 
           <h4 className="mt-4">Project Scope</h4>
-          <p>This project was built for the 2025 IEEE Technical Program at Northwestern University. Our target audience is students at Northwestern University and in the Chicago Metropolitan Area, but we are open to scaling this service in the future based on stakeholder interest.</p>
+          <p>This project was built for the 2025 IEEE Technical Program at <a href="https://www.linkedin.com/company/northwestern-university-ieee-student-branch/" className="text-decoration-none">Northwestern University</a>. Our target audience is students at Northwestern University and in the Chicago Metropolitan Area, but we are open to scaling this service in the future based on stakeholder interest.</p>
 
           <h4 className="mt-4">Acknowledgements</h4>
           <p>
