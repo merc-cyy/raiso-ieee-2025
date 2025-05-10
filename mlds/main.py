@@ -1,116 +1,71 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from supabase_keybert_recommendation import VolunteerRecommender 
 from dotenv import load_dotenv
-import os
 from supabase import create_client, Client
-
+from supabase_keybert_recommendation import VolunteerRecommender 
 from llm_recommendation import llmRecommender
+import os
+import traceback
 
-app = FastAPI()
+# Load environment
 load_dotenv()
 
+app = FastAPI()
 
-# declare origin/s
-origins = [
-    "https://nuvolunteers.org/",
-    "localhost:3000"
-]
-
-
-# CORS setup for React frontend
+# CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],  # or your frontend URL
+    allow_origins=['*'],  # consider whitelisting in production
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Supabase init
+# Supabase setup
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-#jobs
-jobs = {}
+# Initialize recommenders ONCE
+print("Bootstrapping KeyBERT Recommender...")
+recommender = VolunteerRecommender(supabase)
+recommender.fetch_data()
+recommender.fit()
+print("KeyBERT is ready.")
 
+print("Bootstrapping LLM Recommender...")
+generator = llmRecommender(supabase)
+generator.fetch_data()
+generator.load_data()
+generator.build_qa_chain()
+print("LLM Generator is ready.")
 
-
-# Define request schema
+# Request schemas
 class ExampleRequest(BaseModel):
     userid: str
-recommender = VolunteerRecommender(supabase)
+
+class ExampleRequestGen(BaseModel):
+    blurb: str
+
+# Routes
 @app.post("/recommend/")
 def recommend(request: ExampleRequest):
     try:
-        # Load recommender once
-
-        print("JUST STARTING")
-        user_id = request.userid
-        print(f"USERID:{user_id}")
-        
-        print("INIT IS DONE")
-        recommender.fetch_data()
-        print("Before MODEL FIT")
-        recommender.fit()
-        print("MODEL FIT IS DONE")
-        user_embedding = recommender.build_user_profile(user_id)
-        print("USER RECOMMENDATIONS TAKEN INTO CONSIDERATION")
+        user_embedding = recommender.build_user_profile(request.userid)
         recommendations = recommender.recommend_for_user(user_embedding, top_n=1000)
-        # output_path = f"/tmp/recommendations_{user_id}.csv"
-        # recommendations.to_csv(output_path, index=False)
-        # print(f"Recommendations written to: {output_path}")
-        # Convert DataFrame to list of dictionaries
-        recommendations_list = recommendations.to_dict(orient="records")
-
-        # print(f"RECOMMENDATIONS:{recommendations_list}")
-        return {
-            'jobs' : recommendations_list
-        }
+        return {'jobs': recommendations.to_dict(orient="records")}
     except Exception as e:
-        import traceback
         print("bad ERROR OCCURRED:")
-        traceback.print_exc() 
+        traceback.print_exc()
         return {"error": str(e)}
 
-
-
-
-# Define request schema
-class ExampleRequestGen(BaseModel):
-    blurb: str
-generator = llmRecommender(supabase)
 @app.post("/generate/")
 def generate(req: ExampleRequestGen):
     try:
-        # Load recommender once
-
-        print("JUST STARTING")
-        blurb = req.blurb
-        print(f"USERID:{blurb}")
-        
-        print("INIT IS DONE")
-        generator.fetch_data()
-        print("Before MODEL FIT")
-        generator.load_data()
-        print("MODEL FIT IS DONE")
-        generator.build_qa_chain()
-        print("USER RECOMMENDATIONS TAKEN INTO CONSIDERATION")
-        gen_recommendations = generator.recommend(blurb)
-        # output_path = f"/tmp/recommendations_{user_id}.csv"
-        # recommendations.to_csv(output_path, index=False)
-        # print(f"Recommendations written to: {output_path}")
-        # Convert DataFrame to list of dictionaries
-        recommendations_list = gen_recommendations.to_dict(orient="records")
-
-        # print(f"RECOMMENDATIONS:{recommendations_list}")
-        return {
-            'jobs' : recommendations_list
-        }
+        gen_recommendations = generator.recommend(req.blurb)
+        return {'jobs': gen_recommendations.to_dict(orient="records")}
     except Exception as e:
-        import traceback
         print("bad ERROR OCCURRED:")
-        traceback.print_exc() 
+        traceback.print_exc()
         return {"error": str(e)}
