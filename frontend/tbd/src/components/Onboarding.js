@@ -107,7 +107,7 @@ function Onboarding() {
             <div className='text-center'>
               <h4>🎉 You're almost there!</h4>
               <p className='text-muted mt-2'>Check your inbox and confirm your email to complete your registration.</p>
-              <button onClick={handleResendConfirmation} className='btn btn-outline-primary mt-3'>Resend Confirmation Email</button>
+              <button onClick={handleResendConfirmation} className='btn custom-btn-post-color mt-3'>Resend Confirmation Email</button>
               {resendSuccess && <p className='text-success mt-2'>Confirmation email sent again!</p>}
             </div>
           ) : (
