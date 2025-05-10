@@ -116,7 +116,7 @@ function StudentDashboard() {
                             <i class="bi bi-person-fill fs-1 custom-icon-color"></i>
                         </div>
                     <div>
-                    <h5>{firstName} {lastName}</h5>
+                    {/* <h5>{firstName} {lastName}</h5> */}
                     {/* Optional: User Role */}
                     <p className="text-muted small">Student</p>
                             </div>
