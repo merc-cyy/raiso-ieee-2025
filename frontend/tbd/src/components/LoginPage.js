@@ -12,7 +12,7 @@ function LoginPage() {
 
   const handleLoginSubmit = async (event) => {
     event.preventDefault();
-    const backendApiUrl ='https://mldsnuvolunteers-957655660599.us-central1.run.app/';
+    const backendApiUrl ='https://backend-ieee.onrender.com';
 
     try {
       const response = await fetch(`${backendApiUrl}/auth/login`, {

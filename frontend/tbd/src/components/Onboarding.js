@@ -3,7 +3,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 
 function Onboarding() {
-  const backendApiUrl = 'https://mldsnuvolunteers-957655660599.us-central1.run.app/';
+  const backendApiUrl = 'https://backend-ieee.onrender.com';
 
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [registrationError, setRegistrationError] = useState('');

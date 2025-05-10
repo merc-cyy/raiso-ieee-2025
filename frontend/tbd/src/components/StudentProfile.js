@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function StudentProfile() {
-  const backendApiUrl = 'https://mldsnuvolunteers-957655660599.us-central1.run.app/';
+  const backendApiUrl = 'https://backend-ieee.onrender.com';
   const navigate = useNavigate();
 
   const authToken = localStorage.getItem('authToken');
