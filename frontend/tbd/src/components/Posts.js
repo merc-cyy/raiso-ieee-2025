@@ -20,6 +20,7 @@ function Posts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedJobId, setExpandedJobId] = useState(null);
   const [recommendedJobs, setRecommendedJobs] = useState([]);
+  const [generating, setGenerating] = useState(false);
 
   const itemsPerPage = 6;
 
@@ -91,9 +92,14 @@ function Posts() {
     }
   };
 
-  const handleApply = async (jobId) => {
+  const handleApply = async (jobId, url) => {
+    console.log(jobId)
     if (!appliedJobs.includes(jobId)) {
       await updateInterestInDB(jobId, 'apply');
+      if (url) {
+        console.log(url)
+        window.open(url, '_blank');
+      }
     }
   };
 
@@ -189,6 +195,7 @@ function Posts() {
 
   const generateJobs = async (e) => {
     e.preventDefault();
+    setGenerating(true);
     console.log("GENERATE FUNCTION WORKING")
   
     try {
@@ -218,8 +225,9 @@ function Posts() {
   
       setRecommendedJobs(prioritizedJobs);
       setError(null);
+      setGenerating(false);
     } catch (error) {
-
+      setGenerating(false);
       console.log("NO RECOMMENDED JOBS")
       //await fetchAllJobs();
       setRecommendedJobs([]);
@@ -277,7 +285,7 @@ function Posts() {
                   </>
                 )}
                 <div className='d-flex align-items-center mt-3'>
-                  <button className='btn custom-btn-post-color me-3' style={{ backgroundColor: isJobApplied(job.id) ? '#B1DABE' : '', color: isJobApplied(job.id) ? 'black' : '' }} onClick={() => handleApply(job.id)} disabled={isJobApplied(job.id)}>{isJobApplied(job.id) ? 'Applied!' : 'Apply'}</button>
+                  <button className='btn custom-btn-post-color me-3' style={{ backgroundColor: isJobApplied(job.id) ? '#B1DABE' : '', color: isJobApplied(job.id) ? 'black' : '' }} onClick={() => handleApply(job.id, job.url)} disabled={isJobApplied(job.id)}>{isJobApplied(job.id) ? 'Applied!' : 'Apply'}</button>
                   <i
                     className={`bi fs-3 thumb-icon ${isJobLiked(job.id) ? 'bi-hand-thumbs-up-fill liked' : 'bi-hand-thumbs-up'}`}
                     style={{ cursor: 'pointer' }}
@@ -296,11 +304,29 @@ function Posts() {
             <form onSubmit={generateJobs}>
               <div className='mb-3'>
                 <label htmlFor='newinterest' className='form-label'>Your Interests</label>
-                <textarea className='form-control' id='newinterest' rows='3' value={newinterest} onChange={(e) => setNewInterest(e.target.value)}></textarea>
+                <textarea
+                  className='form-control'
+                  id='newinterest'
+                  rows='3'
+                  value={newinterest}
+                  onChange={(e) => setNewInterest(e.target.value)}
+                />
               </div>
               <button type='submit' className='btn custom-btn-post-color w-100'>Generate</button>
             </form>
           </div>
+              {generating && (
+                <div className='text-center mt-4'>
+                  <div
+                    className='spinner-border glowing-spinner'
+                    role='status'
+                    style={{ color: '#5f00b6', width: '2.5rem', height: '2.5rem' }}
+                  >
+                    <span className='visually-hidden'>Generating...</span>
+                  </div>
+                  <p className='mt-3 text-muted fw-medium'>Generating personalized matches <span role="img" aria-label="magic">🪄</span></p>
+                </div>
+              )}
         </div>
 
         {totalPages > 1 && (
