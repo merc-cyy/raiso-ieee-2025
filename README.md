@@ -30,7 +30,7 @@ This is the frontend service of the system.
 - Performance & Optimization  – Lazy loading, modular component design, minimal re-rendering
 
 
-**Acknowledgements**
+## Acknowledgements
 Many thanks to my team members:
 - Ayush Arora
 - Emran Majidy
